@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Elastic Brand Colors */
+  --elastic-midnight: #153385;
+  --elastic-blue: #0B64DD;
+  --elastic-teal: #48EFCF;
+  --elastic-yellow: #FEC514;
+  --elastic-pink: #F04E98;
+  --elastic-poppy: #FF957D;
+  --elastic-dev-blue: #101C3F;
+  --elastic-dark-ink: #1C1E23;
+  --elastic-light-grey: #F5F7FA;
+  --elastic-white: #FFFFFF;
+}
+
+/* Dark theme (default) */
+:root.dark {
+  --bg-primary: #101C3F;
+  --bg-secondary: #1C1E23;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.2);
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --orb-opacity: 0.08;
+  --grid-opacity: 0.02;
+}
+
+/* Light theme */
+:root.light {
+  --bg-primary: #F5F7FA;
+  --bg-secondary: #FFFFFF;
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --border-color: rgba(16, 28, 63, 0.1);
+  --border-hover: rgba(16, 28, 63, 0.2);
+  --text-primary: #101C3F;
+  --text-secondary: rgba(16, 28, 63, 0.7);
+  --text-muted: rgba(16, 28, 63, 0.5);
+  --orb-opacity: 0.15;
+  --grid-opacity: 0.03;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Outfit', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom scrollbar - Dark */
+.dark ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--elastic-dark-ink);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--elastic-blue);
+  border-radius: 3px;
+}
+
+/* Custom scrollbar - Light */
+.light ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.light ::-webkit-scrollbar-track {
+  background: #E5E7EB;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: var(--elastic-blue);
+  border-radius: 3px;
+}
+
+/* Gradient text utility - Bold Minimalism style */
+.gradient-text {
+  background: linear-gradient(135deg, var(--elastic-blue) 0%, var(--elastic-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .gradient-text {
+  background: linear-gradient(135deg, var(--elastic-teal) 0%, var(--elastic-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-teal {
+  box-shadow: 0 0 30px rgba(72, 239, 207, 0.4);
+}
+
+.glow-pink {
+  box-shadow: 0 0 30px rgba(240, 78, 152, 0.4);
+}
+
+.glow-blue {
+  box-shadow: 0 0 30px rgba(11, 100, 221, 0.4);
+}
+
+/* Scene container */
+.scene {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem 2rem 4rem;
+}
+
+/* Allow scene content to grow beyond viewport if needed */
+.scene > * {
+  flex-shrink: 0;
+}
+
+/* Subtle grid background pattern */
+.grid-bg {
+  background-image: 
+    linear-gradient(rgba(11, 100, 221, var(--grid-opacity)) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 100, 221, var(--grid-opacity)) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Noise texture overlay */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Theme-aware utility classes */
+.theme-bg {
+  background-color: var(--bg-primary);
+}
+
+.theme-bg-card {
+  background-color: var(--bg-card);
+}
+
+.theme-text {
+  color: var(--text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
+}
+
+.theme-border {
+  border-color: var(--border-color);
+}
+
