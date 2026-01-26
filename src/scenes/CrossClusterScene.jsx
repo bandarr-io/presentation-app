@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import { useTheme } from '../context/ThemeContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faServer, faMagnifyingGlass, faCloud, faBuilding } from '@fortawesome/free-solid-svg-icons'
+import { faServer, faMagnifyingGlass, faCloud, faBuilding, faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 
 const remoteClusters = [
   { id: 'onprem', name: 'On-Prem Data Centers', type: 'onprem', color: '#48EFCF' },
@@ -23,6 +23,7 @@ function CrossClusterScene() {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
   const [queryPhase, setQueryPhase] = useState('idle')
+  const [replicationPhase, setReplicationPhase] = useState('idle')
   const [isAnimating, setIsAnimating] = useState(false)
   const containerRef = useRef(null)
 
@@ -43,10 +44,21 @@ function CrossClusterScene() {
     }, 3400)  // Return complete
   }
 
-  useEffect(() => {
-    const timer = setTimeout(runAnimation, 1500)
-    return () => clearTimeout(timer)
-  }, [])
+  const runReplication = () => {
+    if (isAnimating) return
+    setIsAnimating(true)
+    setReplicationPhase('replicating')
+    
+    // Data flows between clusters for 2 seconds, then syncs for 1 second
+    setTimeout(() => setReplicationPhase('syncing'), 2000)
+    setTimeout(() => {
+      setReplicationPhase('complete')
+      setTimeout(() => {
+        setReplicationPhase('idle')
+        setIsAnimating(false)
+      }, 1500)
+    }, 3000)
+  }
 
   return (
     <div className="scene !py-2">
@@ -121,7 +133,7 @@ function CrossClusterScene() {
                   transition={{ delay: 0.3 }}
                 >
                   <motion.div
-                    className={`px-10 py-5 rounded-2xl border-2 ${
+                    className={`pr-4 rounded-2xl border-2 ${
                       isDark ? 'bg-elastic-dev-blue' : 'bg-white'
                     }`}
                     style={{ 
@@ -129,7 +141,7 @@ function CrossClusterScene() {
                       boxShadow: queryPhase === 'complete' ? '0 0 30px rgba(72,239,207,0.5)' : 'none'
                     }}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center">
                       <img 
                         src="/logo-elastic-glyph-color.png" 
                         alt="Elastic" 
@@ -280,8 +292,86 @@ function CrossClusterScene() {
               </div>
 
               {/* Remote Clusters Row - Bottom */}
-              <div className="px-6 pb-8">
-                <div className="grid grid-cols-4 gap-4">
+              <div className="px-6 pb-8 relative">
+                {/* Horizontal replication lines between clusters */}
+                <svg 
+                  className="absolute inset-0 w-full pointer-events-none" 
+                  style={{ top: '45px', height: '30px' }}
+                  preserveAspectRatio="none"
+                >
+                  {[0, 1, 2].map((i) => {
+                    // Lines connect between cluster centers: 12.5%, 37.5%, 62.5%, 87.5%
+                    // Offset from center to edge of cluster card
+                    const clusterCenter1 = 12.5 + (i * 25)
+                    const clusterCenter2 = 12.5 + ((i + 1) * 25)
+                    const x1 = clusterCenter1 + 8 // right edge of left cluster
+                    const x2 = clusterCenter2 - 8 // left edge of right cluster
+                    return (
+                      <motion.line
+                        key={`repl-line-${i}`}
+                        x1={`${x1}%`}
+                        y1="50%"
+                        x2={`${x2}%`}
+                        y2="50%"
+                        stroke={replicationPhase !== 'idle' ? '#FEC514' : 'rgba(255,255,255,0.3)'}
+                        strokeWidth="2"
+                        strokeDasharray="6 4"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                      />
+                    )
+                  })}
+                </svg>
+
+                {/* Replication ball animations */}
+                {replicationPhase === 'replicating' && [0, 1, 2].map((i) => {
+                  const clusterCenter1 = 12.5 + (i * 25)
+                  const clusterCenter2 = 12.5 + ((i + 1) * 25)
+                  const x1 = clusterCenter1 + 8
+                  const x2 = clusterCenter2 - 8
+                  const color1 = remoteClusters[i].color
+                  const color2 = remoteClusters[i + 1].color
+                  
+                  return (
+                    <div key={`repl-balls-${i}`}>
+                      {/* Ball going right */}
+                      <motion.div
+                        className="absolute w-3 h-3 rounded-full"
+                        style={{ 
+                          backgroundColor: color1,
+                          boxShadow: `0 0 10px 3px ${color1}99`,
+                          top: '73px',
+                          marginLeft: '-6px'
+                        }}
+                        initial={{ left: `${x1}%`, opacity: 0 }}
+                        animate={{ 
+                          left: [`${x1}%`, `${x2}%`],
+                          opacity: [0, 1, 1, 0]
+                        }}
+                        transition={{ duration: 1, repeat: 1, ease: 'linear' }}
+                      />
+                      {/* Ball going left */}
+                      <motion.div
+                        className="absolute w-3 h-3 rounded-full"
+                        style={{ 
+                          backgroundColor: color2,
+                          boxShadow: `0 0 10px 3px ${color2}99`,
+                          top: '73px',
+                          marginLeft: '-6px'
+                        }}
+                        initial={{ left: `${x2}%`, opacity: 0 }}
+                        animate={{ 
+                          left: [`${x2}%`, `${x1}%`],
+                          opacity: [0, 1, 1, 0]
+                        }}
+                        transition={{ duration: 1, delay: 0.5, repeat: 1, ease: 'linear' }}
+                      />
+                    </div>
+                  )
+                })}
+
+                <div className="grid grid-cols-4 gap-16">
                   {remoteClusters.map((cluster, index) => (
                     <motion.div
                       key={cluster.id}
@@ -292,8 +382,8 @@ function CrossClusterScene() {
                     >
                       {/* Cluster card */}
                       <div className="relative w-full">
-                        {/* Animated gradient border during processing */}
-                        {queryPhase === 'processing' && (
+                        {/* Animated gradient border during processing or syncing */}
+                        {(queryPhase === 'processing' || replicationPhase === 'syncing') && (
                           <motion.div
                             className="absolute -inset-[3px] rounded-2xl"
                             style={{
@@ -310,7 +400,7 @@ function CrossClusterScene() {
                             isDark ? 'bg-elastic-dev-blue' : 'bg-white'
                           }`}
                           style={{ 
-                            borderColor: queryPhase === 'processing' ? 'transparent' : (isDark ? 'rgba(255,255,255,0.2)' : 'rgba(16,28,63,0.2)'),
+                            borderColor: (queryPhase === 'processing' || replicationPhase === 'syncing') ? 'transparent' : (isDark ? 'rgba(255,255,255,0.2)' : 'rgba(16,28,63,0.2)'),
                           }}
                         >
                           <div className="flex items-center justify-center gap-3 mb-3">
@@ -330,7 +420,7 @@ function CrossClusterScene() {
                           </div>
                           
                           <div 
-                            className="text-center py-2 px-3 rounded-xl text-sm font-semibold"
+                            className="text-center py-2 px-2 rounded-xl text-xs font-semibold whitespace-nowrap"
                             style={{ backgroundColor: `${cluster.color}20`, color: cluster.color }}
                           >
                             {cluster.name}
@@ -359,8 +449,8 @@ function CrossClusterScene() {
                 isDark ? 'bg-white/10' : 'bg-elastic-dev-blue/10'
               }`}
             >
-              {queryPhase === 'idle' && (
-                <span className={isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}>Ready to query</span>
+              {queryPhase === 'idle' && replicationPhase === 'idle' && (
+                <span className={isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}>Ready</span>
               )}
               {queryPhase === 'sending' && (
                 <>
@@ -383,22 +473,51 @@ function CrossClusterScene() {
               {queryPhase === 'complete' && (
                 <span className="text-elastic-teal">✓ Results from 4 clusters in 42ms</span>
               )}
+              {replicationPhase === 'replicating' && (
+                <>
+                  <motion.div className="w-2 h-2 rounded-full bg-elastic-yellow" animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 0.5, repeat: Infinity }} />
+                  <span className="text-elastic-yellow">Replicating data...</span>
+                </>
+              )}
+              {replicationPhase === 'syncing' && (
+                <>
+                  <motion.div className="w-2 h-2 rounded-full bg-elastic-pink" animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 0.5, repeat: Infinity }} />
+                  <span className="text-elastic-pink">Syncing clusters...</span>
+                </>
+              )}
+              {replicationPhase === 'complete' && (
+                <span className="text-elastic-teal">✓ All clusters in sync</span>
+              )}
             </motion.div>
 
-            {/* Run Query Button - aligned with status indicator */}
-            <motion.button
-              className="absolute top-4 right-4 px-4 py-2 rounded-full bg-gradient-to-r from-elastic-teal to-elastic-blue text-white text-sm flex items-center gap-2 disabled:opacity-50"
-              whileHover={{ scale: isAnimating ? 1 : 1.05 }}
-              whileTap={{ scale: isAnimating ? 1 : 0.95 }}
-              onClick={runAnimation}
-              disabled={isAnimating}
+            {/* Action Buttons - aligned with status indicator */}
+            <motion.div
+              className="absolute top-4 right-4 flex items-center gap-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
-              <FontAwesomeIcon icon={faMagnifyingGlass} />
-              {isAnimating ? 'Running...' : 'Run Query'}
-            </motion.button>
+              <motion.button
+                className="px-4 py-2 rounded-full bg-gradient-to-r from-elastic-teal to-elastic-blue text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                whileHover={{ scale: isAnimating ? 1 : 1.05 }}
+                whileTap={{ scale: isAnimating ? 1 : 0.95 }}
+                onClick={runAnimation}
+                disabled={isAnimating}
+              >
+                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                {queryPhase !== 'idle' ? 'Querying...' : 'Search'}
+              </motion.button>
+              <motion.button
+                className="px-4 py-2 rounded-full bg-gradient-to-r from-elastic-yellow to-elastic-pink text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                whileHover={{ scale: isAnimating ? 1 : 1.05 }}
+                whileTap={{ scale: isAnimating ? 1 : 0.95 }}
+                onClick={runReplication}
+                disabled={isAnimating}
+              >
+                <FontAwesomeIcon icon={faArrowsRotate} />
+                {replicationPhase !== 'idle' ? 'Syncing...' : 'Replicate'}
+              </motion.button>
+            </motion.div>
           </motion.div>
           </div>
         </div>

@@ -76,7 +76,7 @@ function TeamScene() {
           animate={{ opacity: 1, y: 0 }}
         >
           <span className="text-elastic-pink text-sm font-mono uppercase tracking-widest">
-            Who We Are
+            Your Support
           </span>
           <h2 className={`text-5xl md:text-6xl font-bold mt-4 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
             Meet Your <span className="gradient-text">Elastic Team</span>

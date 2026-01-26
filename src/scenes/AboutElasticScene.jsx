@@ -30,7 +30,7 @@ function AboutElasticScene() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-blue text-base font-mono uppercase tracking-widest">
+          <span className="text-elastic-blue text-sm font-mono uppercase tracking-widest">
             Who We Are
           </span>
           <h2 className={`text-5xl md:text-6xl font-bold mt-4 mb-5 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>

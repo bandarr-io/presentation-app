@@ -53,7 +53,7 @@ function DataExplosionScene() {
           animate={{ opacity: 1, y: 0 }}
         >
           <motion.span
-            className="text-elastic-pink text-xs font-mono uppercase tracking-widest"
+            className="text-elastic-pink text-sm font-mono uppercase tracking-widest"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}

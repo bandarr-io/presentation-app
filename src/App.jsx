@@ -10,10 +10,18 @@ import PlatformScene from './scenes/PlatformScene'
 import BusinessValueScene from './scenes/BusinessValueScene'
 import UnifiedStrategyScene from './scenes/UnifiedStrategyScene'
 import CrossClusterScene from './scenes/CrossClusterScene'
+import LicensingScene from './scenes/LicensingScene'
+import SchemaScene from './scenes/SchemaScene'
+import AccessControlScene from './scenes/AccessControlScene'
+import ESQLScene from './scenes/ESQLScene'
+import ConsolidationScene from './scenes/ConsolidationScene'
+import DataTieringScene from './scenes/DataTieringScene'
+import ServicesScene from './scenes/ServicesScene'
 import TeamScene from './scenes/TeamScene'
 import NextStepsScene from './scenes/NextStepsScene'
 import Navigation from './components/Navigation'
 import ProgressBar from './components/ProgressBar'
+import SceneSettings, { useEnabledScenes } from './components/SceneSettings'
 
 // Scene configuration - reorder these to change presentation flow
 // The agenda will automatically reflect the order defined here
@@ -22,40 +30,70 @@ const scenes = [
   { id: 'hero', component: HeroScene, title: 'Introduction', hideFromAgenda: true },
   { id: 'agenda', component: AgendaScene, title: 'Agenda', hideFromAgenda: true },
   { id: 'team', component: TeamScene, title: 'Team Introductions', description: 'The people here to support you', duration: '2 min' },
-  { id: 'about-elastic', component: AboutElasticScene, title: 'About Elastic', description: 'Who we are and what we do', duration: '2 min' },
-  { id: 'challenges', component: ChallengesScene, title: 'Problem Patterns', description: 'Common challenges we solve', duration: '5 min' },
+  { id: 'about-elastic', component: AboutElasticScene, title: 'About Elastic', description: 'Who we are and what we do', duration: '5 min' },
+  { id: 'business-value', component: BusinessValueScene, title: 'Desired Outcomes', description: 'What success looks like', duration: '10 min' },
+  { id: 'challenges', component: ChallengesScene, title: 'Problem Patterns', description: 'Common challenges we solve', duration: '10 min' },
   { id: 'data-explosion', component: DataExplosionScene, title: 'The Data Challenge', description: 'Understanding the landscape', duration: '3 min' },
-  { id: 'unified-strategy', component: UnifiedStrategyScene, title: 'Unified Strategy', description: 'Bringing it all together', duration: '3 min' },
   { id: 'platform', component: PlatformScene, title: 'The Platform', description: 'Our solutions and capabilities', duration: '5 min' },
+  { id: 'unified-strategy', component: UnifiedStrategyScene, title: 'Unified Strategy', description: 'Bringing it all together', duration: '5 min' },
   { id: 'cross-cluster', component: CrossClusterScene, title: 'Cross-Cluster Search', description: 'Distributed search at global scale', duration: '3 min', hideFromAgenda: true },
-  { id: 'business-value', component: BusinessValueScene, title: 'Desired Outcomes', description: 'What success looks like', duration: '3 min' },
-  { id: 'next-steps', component: NextStepsScene, title: 'Next Steps', description: 'Your path forward', duration: '2 min' },
+  { id: 'licensing', component: LicensingScene, title: 'Licensing', description: 'One license, full power', duration: '3 min', hideFromAgenda: true },
+  { id: 'schema', component: SchemaScene, title: 'Elastic Common Schema', description: 'Schema on write advantage', duration: '5 min', hideFromAgenda: true },
+  { id: 'access-control', component: AccessControlScene, title: 'Access Controls', description: 'RBAC & ABAC security', duration: '3 min', hideFromAgenda: true },
+  // { id: 'esql', component: ESQLScene, title: 'ES|QL', description: 'Piped query language', duration: '3 min', hideFromAgenda: true },
+  { id: 'consolidation', component: ConsolidationScene, title: 'Consolidation', description: 'Reduce tool sprawl', duration: '3 min', hideFromAgenda: true },
+  { id: 'data-tiering', component: DataTieringScene, title: 'Data Tiering', description: 'Optimize spend with ILM', duration: '3 min', hideFromAgenda: true },
+  { id: 'services', component: ServicesScene, title: 'Services & Support', description: 'Expert guidance at every stage', duration: '5 min', hideFromAgenda: true },
+  { id: 'next-steps', component: NextStepsScene, title: 'Next Steps', description: 'Your path forward'}, //, duration: '2 min' },
 ]
+
+// All scenes for configuration
+const allScenes = scenes
 
 function App() {
   const { theme } = useTheme()
   const [currentScene, setCurrentScene] = useState(0)
   const [direction, setDirection] = useState(0)
   const [isReady, setIsReady] = useState(false)
+  
+  // Scene filtering and ordering
+  const { 
+    enabledSceneIds, 
+    enabledScenes, 
+    orderedScenes,
+    customDurations,
+    toggleScene, 
+    updateOrder,
+    updateDuration,
+    resetToDefault 
+  } = useEnabledScenes(allScenes)
+  const activeScenes = enabledScenes
 
   // Ensure component is mounted before rendering animations
   useEffect(() => {
     setIsReady(true)
   }, [])
 
+  // Reset current scene if it's now out of bounds
+  useEffect(() => {
+    if (currentScene >= activeScenes.length) {
+      setCurrentScene(Math.max(0, activeScenes.length - 1))
+    }
+  }, [activeScenes.length, currentScene])
+
   const navigateToScene = useCallback((index) => {
-    if (index >= 0 && index < scenes.length) {
+    if (index >= 0 && index < activeScenes.length) {
       setDirection(index > currentScene ? 1 : -1)
       setCurrentScene(index)
     }
-  }, [currentScene])
+  }, [currentScene, activeScenes.length])
 
   const nextScene = useCallback(() => {
-    if (currentScene < scenes.length - 1) {
+    if (currentScene < activeScenes.length - 1) {
       setDirection(1)
       setCurrentScene(prev => prev + 1)
     }
-  }, [currentScene])
+  }, [currentScene, activeScenes.length])
 
   const prevScene = useCallback(() => {
     if (currentScene > 0) {
@@ -83,7 +121,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [nextScene, prevScene, navigateToScene])
 
-  const CurrentSceneComponent = scenes[currentScene].component
+  const CurrentSceneComponent = activeScenes[currentScene]?.component || activeScenes[0]?.component
 
   const variants = {
     enter: (direction) => ({
@@ -133,15 +171,27 @@ function App() {
       <div className={`fixed inset-0 grid-bg pointer-events-none ${theme === 'dark' ? 'opacity-50' : 'opacity-30'}`} />
 
       {/* Progress bar */}
-      <ProgressBar current={currentScene} total={scenes.length} />
+      <ProgressBar current={currentScene} total={activeScenes.length} />
 
       {/* Navigation */}
       <Navigation 
-        scenes={scenes} 
+        scenes={activeScenes} 
         currentScene={currentScene} 
         onNavigate={navigateToScene}
         onNext={nextScene}
         onPrev={prevScene}
+      />
+
+      {/* Scene Settings */}
+      <SceneSettings 
+        scenes={allScenes}
+        enabledSceneIds={enabledSceneIds}
+        orderedScenes={orderedScenes}
+        customDurations={customDurations}
+        onToggle={toggleScene}
+        onUpdateOrder={updateOrder}
+        onUpdateDuration={updateDuration}
+        onReset={resetToDefault}
       />
 
       {/* Scene content */}
@@ -160,7 +210,7 @@ function App() {
             }}
             className="absolute inset-0 overflow-y-auto"
           >
-            <CurrentSceneComponent onNext={nextScene} scenes={scenes} />
+            <CurrentSceneComponent onNext={nextScene} scenes={activeScenes} />
           </motion.div>
         </AnimatePresence>
       )}

@@ -165,14 +165,13 @@ function NextStepsScene() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          <p className="text-4xl md:text-5xl font-bold gradient-text mb-4">Thank You</p>
           <img 
             src={isDark 
-              ? "/Elastic Logo+tagline _ secondary white.png" 
+              ? "/Elastic Logo+tagline_secondary white.svg" 
               : "/Elastic Logo+tagline _ secondary black.png"
             }
             alt="Elastic - The Search AI Company" 
-            className="h-24 w-auto mx-auto"
+            className="h-12 w-auto mx-auto"
           />
         </motion.div>
       </div>

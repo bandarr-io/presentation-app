@@ -68,7 +68,7 @@ function ChallengesScene() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-pink text-base font-mono uppercase tracking-widest">
+          <span className="text-elastic-pink text-sm font-mono uppercase tracking-widest">
             Problem Orientation
           </span>
           <h2 className={`text-5xl md:text-6xl font-bold mt-4 mb-5 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>

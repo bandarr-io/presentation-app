@@ -78,7 +78,7 @@ function Navigation({ scenes, currentScene, onNavigate, onNext, onPrev }) {
 
 
       {/* Theme Toggle */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-50 hidden">
         <motion.button
           onClick={toggleTheme}
           className={`w-12 h-12 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all ${

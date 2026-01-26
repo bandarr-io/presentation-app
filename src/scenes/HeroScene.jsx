@@ -80,11 +80,11 @@ function HeroScene() {
         >
           <img 
             src={isDark 
-              ? "/Elastic Logo+tagline _ primary white.png" 
-              : "/Elastic Logo+tagline _ primary black.png"
+              ? "/Elastic Logo+tagline_secondary white.svg" 
+              : "/Elastic Logo+tagline _ secondary black.png"
             }
             alt="Elastic - The Search AI Company" 
-            className="h-28 w-auto mx-auto object-contain"
+            className="h-15 w-auto mx-auto object-contain mb-10"
           />
         </motion.div>
 

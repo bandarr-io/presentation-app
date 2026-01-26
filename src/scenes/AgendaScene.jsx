@@ -118,16 +118,6 @@ function AgendaScene({ scenes = [] }) {
             </motion.div>
           ))}
         </div>
-
-        {/* Footer note */}
-        <motion.p
-          className={`text-center mt-8 text-sm ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/50'}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          Flexible timing — we'll focus on what matters most to you
-        </motion.p>
       </div>
     </div>
   )
