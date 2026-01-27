@@ -17,6 +17,7 @@ import ESQLScene from './scenes/ESQLScene'
 import ConsolidationScene from './scenes/ConsolidationScene'
 import DataTieringScene from './scenes/DataTieringScene'
 import ServicesScene from './scenes/ServicesScene'
+import DataMeshScene from './scenes/DataMeshScene'
 import TeamScene from './scenes/TeamScene'
 import NextStepsScene from './scenes/NextStepsScene'
 import Navigation from './components/Navigation'
@@ -37,10 +38,11 @@ const scenes = [
   { id: 'platform', component: PlatformScene, title: 'The Platform', description: 'Our solutions and capabilities', duration: '5 min' },
   { id: 'unified-strategy', component: UnifiedStrategyScene, title: 'Unified Strategy', description: 'Bringing it all together', duration: '5 min' },
   { id: 'cross-cluster', component: CrossClusterScene, title: 'Cross-Cluster Search', description: 'Distributed search at global scale', duration: '3 min', hideFromAgenda: true },
+  { id: 'data-mesh', component: DataMeshScene, title: 'Data Mesh', description: 'Distributed data architecture', duration: '5 min', hideFromAgenda: true },
   { id: 'licensing', component: LicensingScene, title: 'Licensing', description: 'One license, full power', duration: '3 min', hideFromAgenda: true },
   { id: 'schema', component: SchemaScene, title: 'Elastic Common Schema', description: 'Schema on write advantage', duration: '5 min', hideFromAgenda: true },
   { id: 'access-control', component: AccessControlScene, title: 'Access Controls', description: 'RBAC & ABAC security', duration: '3 min', hideFromAgenda: true },
-  // { id: 'esql', component: ESQLScene, title: 'ES|QL', description: 'Piped query language', duration: '3 min', hideFromAgenda: true },
+  { id: 'esql', component: ESQLScene, title: 'ES|QL', description: 'Piped query language', duration: '3 min', hideFromAgenda: true },
   { id: 'consolidation', component: ConsolidationScene, title: 'Consolidation', description: 'Reduce tool sprawl', duration: '3 min', hideFromAgenda: true },
   { id: 'data-tiering', component: DataTieringScene, title: 'Data Tiering', description: 'Optimize spend with ILM', duration: '3 min', hideFromAgenda: true },
   { id: 'services', component: ServicesScene, title: 'Services & Support', description: 'Expert guidance at every stage', duration: '5 min', hideFromAgenda: true },
