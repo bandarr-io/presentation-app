@@ -35,16 +35,16 @@ const scenes = [
   { id: 'business-value', component: BusinessValueScene, title: 'Desired Outcomes', description: 'What success looks like', duration: '10 min' },
   { id: 'challenges', component: ChallengesScene, title: 'Problem Patterns', description: 'Common challenges we solve', duration: '10 min' },
   { id: 'data-explosion', component: DataExplosionScene, title: 'The Data Challenge', description: 'Understanding the landscape', duration: '3 min' },
-  { id: 'platform', component: PlatformScene, title: 'The Platform', description: 'Our solutions and capabilities', duration: '5 min' },
   { id: 'unified-strategy', component: UnifiedStrategyScene, title: 'Unified Strategy', description: 'Bringing it all together', duration: '5 min' },
+  { id: 'platform', component: PlatformScene, title: 'Capabilities', description: 'Our solutions and capabilities', duration: '5 min' },
   { id: 'cross-cluster', component: CrossClusterScene, title: 'Cross-Cluster Search', description: 'Distributed search at global scale', duration: '3 min', hideFromAgenda: true },
   { id: 'data-mesh', component: DataMeshScene, title: 'Data Mesh', description: 'Distributed data architecture', duration: '5 min', hideFromAgenda: true },
-  { id: 'licensing', component: LicensingScene, title: 'Licensing', description: 'One license, full power', duration: '3 min', hideFromAgenda: true },
   { id: 'schema', component: SchemaScene, title: 'Elastic Common Schema', description: 'Schema on write advantage', duration: '5 min', hideFromAgenda: true },
   { id: 'access-control', component: AccessControlScene, title: 'Access Controls', description: 'RBAC & ABAC security', duration: '3 min', hideFromAgenda: true },
   { id: 'esql', component: ESQLScene, title: 'ES|QL', description: 'Piped query language', duration: '3 min', hideFromAgenda: true },
-  { id: 'consolidation', component: ConsolidationScene, title: 'Consolidation', description: 'Reduce tool sprawl', duration: '3 min', hideFromAgenda: true },
   { id: 'data-tiering', component: DataTieringScene, title: 'Data Tiering', description: 'Optimize spend with ILM', duration: '3 min', hideFromAgenda: true },
+  { id: 'licensing', component: LicensingScene, title: 'Licensing', description: 'One license, full power', duration: '3 min', hideFromAgenda: true },
+  { id: 'consolidation', component: ConsolidationScene, title: 'Consolidation', description: 'Reduce tool sprawl', duration: '3 min', hideFromAgenda: true },
   { id: 'services', component: ServicesScene, title: 'Services & Support', description: 'Expert guidance at every stage', duration: '5 min', hideFromAgenda: true },
   { id: 'next-steps', component: NextStepsScene, title: 'Next Steps', description: 'Your path forward'}, //, duration: '2 min' },
 ]
@@ -212,7 +212,7 @@ function App() {
             }}
             className="absolute inset-0 overflow-y-auto"
           >
-            <CurrentSceneComponent onNext={nextScene} scenes={activeScenes} />
+            <CurrentSceneComponent onNext={nextScene} scenes={activeScenes} allScenes={orderedScenes} onNavigate={navigateToScene} />
           </motion.div>
         </AnimatePresence>
       )}

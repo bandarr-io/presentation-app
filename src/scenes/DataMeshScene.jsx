@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
   faDatabase, faMagnifyingGlass, faMemory, faHardDrive, faBolt, 
   faCircleNodes, faWarehouse, faWater, faCopy, faGlobe,
-  faArrowRight, faCheck, faTimes, faDollarSign, faClock, 
+  faArrowRight, faArrowUp, faCheck, faTimes, faDollarSign, faClock, 
   faSnowflake, faChevronRight, faChevronLeft, faPlay,
   faRotateRight, faLayerGroup
 } from '@fortawesome/free-solid-svg-icons'
@@ -14,6 +14,7 @@ import {
 const stages = [
   { id: 'question', label: 'The Question' },
   { id: 'dilemma', label: 'The Dilemma' },
+  { id: 'problems', label: 'The Problems' },
   { id: 'workarounds', label: 'The Workarounds' },
   { id: 'transformation', label: 'The Solution' },
 ]
@@ -245,12 +246,11 @@ function ArchitectureCard({ type, isSelected, isOther, onClick, delay = 0 }) {
   
   return (
     <motion.div
-      className={`rounded-2xl border-2 flex flex-col items-center justify-between p-4 cursor-pointer ${
+      className={`h-full rounded-2xl border-2 flex flex-col items-center justify-between p-4 cursor-pointer ${
         isDark ? 'bg-white/[0.03]' : 'bg-white/50'
-      } ${isSelected ? 'ring-2 ring-offset-2 ring-offset-transparent' : ''}`}
+      }`}
       style={{ 
         borderColor: isSelected ? data.color : `${data.color}40`,
-        ringColor: data.color,
       }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: isOther ? 0.4 : 1, y: 0 }}
@@ -261,7 +261,7 @@ function ArchitectureCard({ type, isSelected, isOther, onClick, delay = 0 }) {
         delay
       }}
       onClick={onClick}
-      whileHover={{ scale: isOther ? 1 : 1.02, borderColor: data.color }}
+      whileHover={{ borderColor: data.color }}
     >
       {/* Architecture diagram */}
       <div className="flex-1 flex items-center justify-center py-4">
@@ -288,7 +288,7 @@ function ProblemsPanel({ type }) {
   
   return (
     <motion.div
-      className={`rounded-2xl border-2 p-6 ${isDark ? 'bg-white/[0.02]' : 'bg-white/70'}`}
+      className={`h-full rounded-2xl border-2 p-6 ${isDark ? 'bg-white/[0.02]' : 'bg-white/70'}`}
       style={{ borderColor: `${data.color}40` }}
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -453,9 +453,24 @@ function SearchBar({ text, isTyping, onShowAnswer, searchComplete, showCursor = 
   )
 }
 
-function DataMeshScene() {
+function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
+  
+  // Navigate to a scene by ID - searches in active scenes
+  const navigateToSceneById = useCallback((sceneId) => {
+    console.log('Attempting to navigate to:', sceneId)
+    console.log('Available scenes:', scenes.map(s => s.id))
+    // Find the scene in active scenes (scenes prop)
+    const index = scenes.findIndex(s => s.id === sceneId)
+    console.log('Found at index:', index)
+    if (index !== -1 && onNavigate) {
+      console.log('Calling onNavigate with index:', index)
+      onNavigate(index)
+    } else {
+      console.warn(`Scene "${sceneId}" not found in active scenes. It may be disabled. Available: ${scenes.map(s => s.id).join(', ')}`)
+    }
+  }, [scenes, onNavigate])
   const [stage, setStage] = useState(0)
   const [showAnswer, setShowAnswer] = useState(false)
   const [meshActive, setMeshActive] = useState(false)
@@ -499,8 +514,7 @@ function DataMeshScene() {
         clearInterval(typeInterval)
         setIsTyping(false)
         setSearchComplete(true)
-        // Show answer after a longer pause for dramatic effect
-        setTimeout(() => setShowAnswer(true), 2000)
+        // Answer only shows when user clicks the search button
       }
     }, 100) // Typing speed (slower)
     
@@ -548,7 +562,7 @@ function DataMeshScene() {
   // Run query animation
   const runQuery = useCallback(() => {
     setQueryActive(true)
-    setTimeout(() => setQueryActive(false), 2000)
+    setTimeout(() => setQueryActive(false), 5000)
   }, [])
 
   return (
@@ -556,7 +570,7 @@ function DataMeshScene() {
       <div className="max-w-[98%] mx-auto w-full h-full flex flex-col">
         {/* Header with progress */}
         <motion.div
-          className="text-center mb-2"
+          className="text-center mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -564,12 +578,15 @@ function DataMeshScene() {
             The Data Story
           </span>
           <h2 className={`text-3xl md:text-4xl font-bold mt-1 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-            From Chaos to <span className="gradient-text">Data Mesh</span>
+            From Chaos to <span className="gradient-text">Clarity</span>
           </h2>
+          <p className={`text-lg mt-3 max-w-3xl mx-auto ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/60'}`}>
+            How Elastic creates an enterprise-wide data mesh to search and act on data at scale.
+          </p>
         </motion.div>
 
         {/* Stage Progress Indicator */}
-        <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex items-center justify-center gap-2 mb-6">
           {stages.map((s, i) => (
             <button
               key={s.id}
@@ -598,21 +615,21 @@ function DataMeshScene() {
         </div>
 
         {/* Main Stage Content */}
-        <div className="flex-1 relative overflow-hidden rounded-2xl border bg-gradient-to-br from-transparent to-white/[0.02] border-white/10 min-h-[520px]">
+        <div className="flex-1 relative overflow-hidden rounded-2xl border bg-gradient-to-br from-transparent to-white/[0.02] border-white/10 min-h-[520px] max-w-6xl mx-auto w-full">
           <AnimatePresence mode="popLayout">
             
             {/* STAGE 1: The Question */}
             {stage === 0 && (
               <motion.div
                 key="question"
-                className="absolute inset-0 flex flex-col items-center justify-center p-8"
+                className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-full max-w-5xl flex flex-col items-center justify-center p-8"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
               >
                 {/* Background particles */}
-                <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-full max-w-4xl overflow-hidden">
                   {backgroundParticles.map((particle) => (
                     <DataParticle
                       key={particle.id}
@@ -657,43 +674,45 @@ function DataMeshScene() {
                     </motion.p>
                   )}
 
-                  {/* Answer Section */}
+                  {/* Answer Section - styled as search results */}
                   <AnimatePresence>
                     {showAnswer && (
                       <motion.div
-                        className="text-center mt-12"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        className={`w-full max-w-3xl mx-auto mt-6 px-6 py-5 rounded-2xl border-2 ${
+                          isDark ? 'bg-white/[0.03] border-white/20' : 'bg-white/50 border-elastic-dev-blue/20'
+                        }`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
                       >
                         <motion.p
-                          className="text-6xl md:text-8xl font-bold gradient-text mb-6"
-                          initial={{ opacity: 0, scale: 0.5, y: 30 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          className="text-4xl md:text-5xl font-bold gradient-text mb-3"
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
                           transition={{ type: 'spring', stiffness: 200 }}
                         >
                           To use it.
                         </motion.p>
                         
                         <motion.p
-                          className={`text-xl max-w-2xl mx-auto ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}
+                          className={`text-base ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          transition={{ delay: 0.5 }}
+                          transition={{ delay: 0.3 }}
                         >
-                          Data is a strategic asset. We need to retrieve, connect, and act on it—
+                          Data is a <span className="italic">strategic asset</span>. We need to retrieve, connect, and act on it—
                           <span className="text-elastic-teal font-semibold"> fast</span>.
                         </motion.p>
 
                         <motion.div
-                          className={`mt-8 p-4 rounded-xl border max-w-xl mx-auto ${
-                            isDark ? 'bg-elastic-pink/10 border-elastic-pink/30' : 'bg-elastic-pink/5 border-elastic-pink/20'
+                          className={`mt-4 pt-4 border-t ${
+                            isDark ? 'border-white/10' : 'border-elastic-dev-blue/10'
                           }`}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 1 }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.6 }}
                         >
-                          <p className={`text-lg ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-                            But data is generated <span className="font-bold">everywhere</span>. 
+                          <p className="text-base text-elastic-pink">
+                            But data is generated <span className="font-medium">everywhere</span>. 
                             How do you get total visibility—at speed, at scale, without breaking the bank?
                           </p>
                         </motion.div>
@@ -715,7 +734,7 @@ function DataMeshScene() {
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
               >
                 <motion.p
-                  className={`text-lg mb-4 text-center ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}
+                  className={`text-xl mb-6 text-center ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
@@ -733,13 +752,13 @@ function DataMeshScene() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-elastic-teal/20 flex items-center justify-center">
-                        <FontAwesomeIcon icon={faMemory} className="text-elastic-teal text-lg" />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-elastic-teal/20 flex items-center justify-center">
+                        <FontAwesomeIcon icon={faMemory} className="text-elastic-teal text-xl" />
                       </div>
                       <div>
-                        <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>Search</h3>
-                        <p className="text-elastic-teal text-xs">Like memory</p>
+                        <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>Search</h3>
+                        <p className="text-elastic-teal text-sm">Like memory</p>
                       </div>
                     </div>
 
@@ -752,7 +771,7 @@ function DataMeshScene() {
                       ].map((item, i) => (
                         <motion.div
                           key={i}
-                          className={`flex items-center justify-between px-2 py-1.5 rounded-lg ${
+                          className={`flex items-center justify-between px-3 py-2 rounded-lg ${
                             isDark ? 'bg-white/[0.05]' : 'bg-white/50'
                           }`}
                           initial={{ opacity: 0, x: -20 }}
@@ -760,24 +779,24 @@ function DataMeshScene() {
                           transition={{ delay: 0.5 + i * 0.1 }}
                         >
                           <div className="flex items-center gap-2">
-                            <FontAwesomeIcon icon={item.icon} className="text-elastic-teal text-xs" />
-                            <span className={`text-xs ${isDark ? 'text-white/80' : 'text-elastic-dev-blue/80'}`}>{item.text}</span>
+                            <FontAwesomeIcon icon={item.icon} className="text-elastic-teal text-sm" />
+                            <span className={`text-sm ${isDark ? 'text-white/80' : 'text-elastic-dev-blue/80'}`}>{item.text}</span>
                           </div>
                           <FontAwesomeIcon 
                             icon={item.good ? faCheck : faTimes} 
-                            className={`text-xs ${item.good ? 'text-elastic-teal' : 'text-elastic-pink'}`}
+                            className={`text-sm ${item.good ? 'text-elastic-teal' : 'text-elastic-pink'}`}
                           />
                         </motion.div>
                       ))}
                     </div>
 
                     <motion.div
-                      className="mt-3 text-center"
+                      className="mt-4 text-center"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 1 }}
                     >
-                      <span className={`text-xs italic ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                      <span className={`text-sm italic ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
                         Fast & flexible, but expensive
                       </span>
                     </motion.div>
@@ -790,7 +809,7 @@ function DataMeshScene() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.6 }}
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${
+                    <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold ${
                       isDark ? 'bg-white/10 text-white' : 'bg-elastic-dev-blue/10 text-elastic-dev-blue'
                     }`}>
                       vs
@@ -807,13 +826,13 @@ function DataMeshScene() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
-                        <FontAwesomeIcon icon={faHardDrive} className="text-orange-400 text-lg" />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                        <FontAwesomeIcon icon={faHardDrive} className="text-orange-400 text-xl" />
                       </div>
                       <div>
-                        <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>Storage</h3>
-                        <p className="text-orange-400 text-xs">Like disk</p>
+                        <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>Storage</h3>
+                        <p className="text-orange-400 text-sm">Like disk</p>
                       </div>
                     </div>
 
@@ -826,7 +845,7 @@ function DataMeshScene() {
                       ].map((item, i) => (
                         <motion.div
                           key={i}
-                          className={`flex items-center justify-between px-2 py-1.5 rounded-lg ${
+                          className={`flex items-center justify-between px-3 py-2 rounded-lg ${
                             isDark ? 'bg-white/[0.05]' : 'bg-white/50'
                           }`}
                           initial={{ opacity: 0, x: 20 }}
@@ -834,24 +853,24 @@ function DataMeshScene() {
                           transition={{ delay: 0.5 + i * 0.1 }}
                         >
                           <div className="flex items-center gap-2">
-                            <FontAwesomeIcon icon={item.icon} className="text-orange-400 text-xs" />
-                            <span className={`text-xs ${isDark ? 'text-white/80' : 'text-elastic-dev-blue/80'}`}>{item.text}</span>
+                            <FontAwesomeIcon icon={item.icon} className="text-orange-400 text-sm" />
+                            <span className={`text-sm ${isDark ? 'text-white/80' : 'text-elastic-dev-blue/80'}`}>{item.text}</span>
                           </div>
                           <FontAwesomeIcon 
                             icon={item.good ? faCheck : faTimes} 
-                            className={`text-xs ${item.good ? 'text-elastic-teal' : 'text-elastic-pink'}`}
+                            className={`text-sm ${item.good ? 'text-elastic-teal' : 'text-elastic-pink'}`}
                           />
                         </motion.div>
                       ))}
                     </div>
 
                     <motion.div
-                      className="mt-3 text-center"
+                      className="mt-4 text-center"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 1 }}
                     >
-                      <span className={`text-xs italic ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                      <span className={`text-sm italic ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
                         Cheap but slow
                       </span>
                     </motion.div>
@@ -860,26 +879,117 @@ function DataMeshScene() {
 
                 {/* The Result */}
                 <motion.div
-                  className={`mt-4 p-3 rounded-xl border text-center max-w-2xl ${
+                  className={`mt-6 p-4 rounded-xl border text-center max-w-2xl ${
                     isDark ? 'bg-white/[0.02] border-white/10' : 'bg-white/50 border-elastic-dev-blue/10'
                   }`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2 }}
                 >
-                  <p className={`text-base ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                  <p className={`text-lg ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                     <FontAwesomeIcon icon={faDollarSign} className="text-elastic-yellow mr-2" />
                     Cost won. The industry went <span className="font-bold text-orange-400">storage-first</span>.
                   </p>
-                  <p className={`text-sm mt-1 ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                  <p className={`text-base mt-2 ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
                     But that created new problems...
                   </p>
                 </motion.div>
               </motion.div>
             )}
 
-            {/* STAGE 3: The Workarounds */}
+            {/* STAGE 3: The Problems */}
             {stage === 2 && (
+              <motion.div
+                key="problems"
+                className="absolute inset-0 flex flex-col items-center justify-center p-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+              >
+                <motion.p
+                  className={`text-xl mb-6 text-center ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  Storage-first seemed smart... until the cracks appeared
+                </motion.p>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl w-full">
+                  {[
+                    { 
+                      icon: faDatabase, 
+                      title: 'Data Silos', 
+                      description: 'Isolated pools that can\'t talk to each other',
+                      color: '#FF957D'
+                    },
+                    { 
+                      icon: faClock, 
+                      title: 'Slow Insights', 
+                      description: 'Minutes to hours before you can query',
+                      color: '#F04E98'
+                    },
+                    { 
+                      icon: faGlobe, 
+                      title: 'No Visibility', 
+                      description: 'Can\'t see across the enterprise',
+                      color: '#FEC514'
+                    },
+                    { 
+                      icon: faCopy, 
+                      title: 'Data Sprawl', 
+                      description: 'Copies everywhere, truth nowhere',
+                      color: '#FF957D'
+                    },
+                  ].map((problem, i) => (
+                    <motion.div
+                      key={i}
+                      className={`p-4 rounded-xl border-2 text-center ${
+                        isDark ? 'bg-white/[0.03]' : 'bg-white/50'
+                      }`}
+                      style={{ borderColor: `${problem.color}40` }}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 + i * 0.15 }}
+                    >
+                      <div 
+                        className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center"
+                        style={{ backgroundColor: `${problem.color}20` }}
+                      >
+                        <FontAwesomeIcon 
+                          icon={problem.icon} 
+                          className="text-xl"
+                          style={{ color: problem.color }}
+                        />
+                      </div>
+                      <h4 className={`text-lg font-bold mb-1 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                        {problem.title}
+                      </h4>
+                      <p className={`text-sm ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
+                        {problem.description}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Bottom message */}
+                <motion.div
+                  className={`mt-6 p-4 rounded-xl border text-center max-w-2xl ${
+                    isDark ? 'bg-elastic-pink/10 border-elastic-pink/30' : 'bg-elastic-pink/5 border-elastic-pink/20'
+                  }`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1 }}
+                >
+                  <p className="text-base text-elastic-pink">
+                    The industry needed solutions. Workarounds emerged...
+                  </p>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {/* STAGE 4: The Workarounds */}
+            {stage === 3 && (
               <motion.div
                 key="workarounds"
                 className="absolute inset-0 flex flex-col p-4"
@@ -901,45 +1011,11 @@ function DataMeshScene() {
                     Workarounds emerged... but data stayed{' '}
                     <span className="text-orange-400">trapped</span>
                   </h3>
-                  <div className="flex items-center justify-center gap-3 mt-2">
-                    {!selectedArchitecture && !showSummary && (
-                      <p className={`text-sm ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
-                        Click any architecture to explore its limitations
-                      </p>
-                    )}
-                    {!showSummary ? (
-                      <motion.button
-                        onClick={() => {
-                          setShowSummary(true)
-                          setSelectedArchitecture(null)
-                        }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${
-                          isDark 
-                            ? 'bg-elastic-pink/20 text-elastic-pink hover:bg-elastic-pink/30' 
-                            : 'bg-elastic-pink/10 text-elastic-pink hover:bg-elastic-pink/20'
-                        }`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <FontAwesomeIcon icon={faLayerGroup} />
-                        Compare All
-                      </motion.button>
-                    ) : (
-                      <motion.button
-                        onClick={() => setShowSummary(false)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${
-                          isDark 
-                            ? 'bg-white/10 text-white/70 hover:bg-white/20' 
-                            : 'bg-elastic-dev-blue/10 text-elastic-dev-blue/70 hover:bg-elastic-dev-blue/20'
-                        }`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <FontAwesomeIcon icon={faChevronLeft} />
-                        Back to Cards
-                      </motion.button>
-                    )}
-                  </div>
+                  {!selectedArchitecture && !showSummary && (
+                    <p className={`text-sm mt-2 ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                      Click any architecture to explore its limitations
+                    </p>
+                  )}
                 </motion.div>
 
                 {/* Main Content */}
@@ -956,7 +1032,7 @@ function DataMeshScene() {
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                       >
                         <div className="grid grid-cols-2 gap-3 max-w-5xl mx-auto">
-                          {['catalog', 'federation', 'lake', 'warehouse'].map((type, i) => {
+                          {['catalog', 'warehouse', 'lake', 'federation'].map((type, i) => {
                             const data = architectureData[type]
                             return (
                               <motion.div
@@ -970,28 +1046,28 @@ function DataMeshScene() {
                                 {/* Header */}
                                 <div className="flex items-center gap-2 mb-2">
                                   <div 
-                                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                                    className="w-9 h-9 rounded-lg flex items-center justify-center"
                                     style={{ backgroundColor: `${data.color}20` }}
                                   >
-                                    <FontAwesomeIcon icon={data.icon} style={{ color: data.color }} />
+                                    <FontAwesomeIcon icon={data.icon} className="text-base" style={{ color: data.color }} />
                                   </div>
                                   <div>
-                                    <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                                    <p className={`text-base font-semibold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                                       {data.label}
                                     </p>
-                                    <p className={`text-[10px] ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                                    <p className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
                                       {data.subtitle}
                                     </p>
                                   </div>
                                 </div>
                                 {/* Problems */}
-                                <div className="space-y-1">
+                                <div className="space-y-0.5">
                                   {data.problems.map((problem, j) => (
                                     <div
                                       key={j}
-                                      className={`flex items-start gap-1.5 text-xs ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}
+                                      className={`flex items-start gap-1.5 text-sm ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}
                                     >
-                                      <FontAwesomeIcon icon={faTimes} className="text-elastic-pink mt-0.5 text-[10px]" />
+                                      <FontAwesomeIcon icon={faTimes} className="text-elastic-pink mt-0.5 text-xs" />
                                       <span>{problem}</span>
                                     </div>
                                   ))}
@@ -1005,14 +1081,14 @@ function DataMeshScene() {
                       /* Default: 4 cards in a row */
                       <motion.div
                         key="grid"
-                        className="flex-1 flex items-center justify-center"
+                        className="flex-1 h-full flex items-center justify-center"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                       >
-                        <div className="grid grid-cols-4 gap-4 max-w-4xl w-full">
-                          {['catalog', 'federation', 'lake', 'warehouse'].map((type, i) => (
+                        <div className="grid grid-cols-4 gap-4 max-w-4xl w-full -mt-4">
+                          {['catalog', 'warehouse', 'lake', 'federation'].map((type, i) => (
                             <ArchitectureCard
                               key={type}
                               type={type}
@@ -1038,7 +1114,7 @@ function DataMeshScene() {
                         <div className="flex-1 flex items-center justify-center gap-6 mb-4">
                           {/* Selected Card */}
                           <motion.div 
-                            className="w-48"
+                            className="w-48 h-72"
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
@@ -1054,7 +1130,7 @@ function DataMeshScene() {
                           
                           {/* Problems Panel */}
                           <motion.div 
-                            className="w-80"
+                            className="w-80 h-72"
                             initial={{ opacity: 0, x: 30 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 30 }}
@@ -1072,7 +1148,7 @@ function DataMeshScene() {
                           exit={{ opacity: 0, y: 20 }}
                           transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.15 }}
                         >
-                          {['catalog', 'federation', 'lake', 'warehouse']
+                          {['catalog', 'warehouse', 'lake', 'federation']
                             .filter(t => t !== selectedArchitecture)
                             .map((type) => (
                               <motion.div
@@ -1086,7 +1162,7 @@ function DataMeshScene() {
                                 exit={{ opacity: 0, y: 10 }}
                                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                                 onClick={() => setSelectedArchitecture(type)}
-                                whileHover={{ opacity: 1, scale: 1.05, borderColor: architectureData[type].color }}
+                                whileHover={{ opacity: 1, borderColor: architectureData[type].color }}
                               >
                                 <FontAwesomeIcon 
                                   icon={architectureData[type].icon} 
@@ -1104,25 +1180,30 @@ function DataMeshScene() {
                   </AnimatePresence>
                 </div>
 
-                {/* Bottom Insight (always visible) */}
-                <motion.div
-                  className={`mt-4 p-3 rounded-xl text-center ${
-                    isDark ? 'bg-white/[0.02] border border-white/10' : 'bg-white/50 border border-elastic-dev-blue/10'
-                  }`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  <p className={`text-sm ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
-                    The problem isn't <span className="text-orange-400 font-semibold">where</span> data lives...
-                    It's whether you can <span className="text-elastic-teal font-semibold">search it all at once</span>.
-                  </p>
-                </motion.div>
+                {/* Bottom Insight (shows after Compare clicked) */}
+                <AnimatePresence>
+                  {showSummary && (
+                    <motion.div
+                      className={`mt-4 p-3 rounded-xl text-center max-w-5xl mx-auto ${
+                        isDark ? 'bg-white/[0.02] border border-white/10' : 'bg-white/50 border border-elastic-dev-blue/10'
+                      }`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <p className={`text-lg ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
+                        The problem isn't <span className="text-orange-400 font-semibold">where</span> data lives...
+                        It's whether you can <span className="text-elastic-teal font-semibold">search it all at once</span>.
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
 
-            {/* STAGE 4: The Transformation */}
-            {stage === 3 && (
+            {/* STAGE 5: The Transformation */}
+            {stage === 4 && (
               <motion.div
                 key="transformation"
                 className="absolute inset-0 flex flex-col p-6"
@@ -1160,13 +1241,17 @@ function DataMeshScene() {
                       >
                         {/* Scattered silos */}
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="relative w-full max-w-2xl h-64">
+                          <div className="relative w-full max-w-3xl h-72">
                             {[
-                              { x: 10, y: 20, label: 'US-East', color: '#48EFCF' },
-                              { x: 70, y: 15, label: 'EU-West', color: '#0B64DD' },
-                              { x: 25, y: 70, label: 'APAC', color: '#F04E98' },
-                              { x: 60, y: 65, label: 'Archive', color: '#FEC514' },
-                              { x: 40, y: 40, label: '???', color: '#FF957D' },
+                              { x: 5, y: 15, label: 'US-East', color: '#48EFCF' },
+                              { x: 75, y: 10, label: 'EU-West', color: '#0B64DD' },
+                              { x: 20, y: 65, label: 'APAC', color: '#F04E98' },
+                              { x: 55, y: 70, label: 'Archive', color: '#FEC514' },
+                              { x: 38, y: 35, label: '???', color: '#FF957D' },
+                              { x: 85, y: 55, label: 'Legacy', color: '#9B59B6' },
+                              { x: 2, y: 45, label: 'On-Prem', color: '#3498DB' },
+                              { x: 60, y: 25, label: 'Cloud', color: '#1ABC9C' },
+                              { x: 30, y: 5, label: 'Logs', color: '#E74C3C' },
                             ].map((silo, i) => (
                               <motion.div
                                 key={i}
@@ -1179,47 +1264,43 @@ function DataMeshScene() {
                                   y: [0, -5, 0],
                                 }}
                                 transition={{ 
-                                  delay: i * 0.1,
-                                  y: { duration: 2, repeat: Infinity, delay: i * 0.3 }
+                                  delay: i * 0.08,
+                                  y: { duration: 2, repeat: Infinity, delay: i * 0.2 }
                                 }}
                               >
                                 <div 
-                                  className={`px-4 py-3 rounded-xl border-2 ${isDark ? 'bg-white/[0.05]' : 'bg-white/70'}`}
+                                  className={`w-20 px-2 py-2 rounded-lg border-2 text-center ${isDark ? 'bg-white/[0.05]' : 'bg-white/70'}`}
                                   style={{ borderColor: `${silo.color}60` }}
                                 >
-                                  <FontAwesomeIcon icon={faDatabase} style={{ color: silo.color }} className="mr-2" />
-                                  <span className={`text-sm font-medium ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
+                                  <FontAwesomeIcon icon={faDatabase} style={{ color: silo.color }} className="text-sm" />
+                                  <span className={`block text-xs font-medium mt-1 ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
                                     {silo.label}
                                   </span>
                                 </div>
-                                {/* Trapped particles */}
-                                {Array.from({ length: 3 }).map((_, j) => (
-                                  <DataParticle
-                                    key={j}
-                                    id={j}
-                                    initialX={Math.random() * 100}
-                                    initialY={Math.random() * 100}
-                                    color={silo.color}
-                                    trapped={true}
-                                    delay={j * 0.3}
-                                  />
-                                ))}
                               </motion.div>
                             ))}
 
                             {/* Question marks between silos */}
                             {[
-                              { x: 40, y: 20 },
-                              { x: 15, y: 45 },
-                              { x: 65, y: 45 },
+                              { x: 25, y: 25, size: 'text-3xl' },
+                              { x: 50, y: 15, size: 'text-2xl' },
+                              { x: 12, y: 40, size: 'text-xl' },
+                              { x: 70, y: 40, size: 'text-2xl' },
+                              { x: 45, y: 55, size: 'text-3xl' },
+                              { x: 80, y: 30, size: 'text-xl' },
+                              { x: 35, y: 75, size: 'text-2xl' },
+                              { x: 65, y: 60, size: 'text-xl' },
+                              { x: 8, y: 70, size: 'text-xl' },
+                              { x: 55, y: 5, size: 'text-xl' },
+                              { x: 90, y: 70, size: 'text-2xl' },
                             ].map((pos, i) => (
                               <motion.div
                                 key={i}
-                                className={`absolute text-2xl ${isDark ? 'text-white/20' : 'text-elastic-dev-blue/20'}`}
+                                className={`absolute ${pos.size} font-bold ${isDark ? 'text-white/15' : 'text-elastic-dev-blue/15'}`}
                                 style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
                                 initial={{ opacity: 0 }}
-                                animate={{ opacity: [0.2, 0.5, 0.2] }}
-                                transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+                                animate={{ opacity: [0.15, 0.4, 0.15] }}
+                                transition={{ duration: 2 + (i % 3) * 0.5, repeat: Infinity, delay: i * 0.2 }}
                               >
                                 ?
                               </motion.div>
@@ -1230,22 +1311,25 @@ function DataMeshScene() {
                         {/* Transform Button */}
                         <motion.div
                           className="absolute bottom-4 left-1/2 -translate-x-1/2"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
                           transition={{ delay: 0.8 }}
                         >
                           <button
                             onClick={() => setMeshActive(true)}
-                            className="px-8 py-4 rounded-xl bg-gradient-to-r from-elastic-teal to-elastic-blue text-white font-semibold text-lg shadow-lg shadow-elastic-teal/30 hover:scale-105 transition-transform flex items-center gap-3"
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${
+                              isDark 
+                                ? 'bg-white/10 text-white/50 hover:bg-elastic-teal/30 hover:text-elastic-teal' 
+                                : 'bg-elastic-dev-blue/10 text-elastic-dev-blue/50 hover:bg-elastic-teal/30 hover:text-elastic-teal'
+                            }`}
                           >
-                            <FontAwesomeIcon icon={faCircleNodes} />
-                            Activate the Mesh
-                            <FontAwesomeIcon icon={faArrowRight} />
+                            <FontAwesomeIcon icon={faCircleNodes} className="text-[10px]" />
+                            Activate Mesh
                           </button>
                         </motion.div>
                       </motion.div>
                     ) : (
-                      /* After: Connected Mesh */
+                      /* After: Connected Mesh - Horizontal Site Layout */
                       <motion.div
                         key="after"
                         className="absolute inset-0"
@@ -1254,110 +1338,350 @@ function DataMeshScene() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.4, ease: 'easeInOut' }}
                       >
-                        {/* Mesh Visualization */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="relative w-full max-w-3xl h-72">
-                            {/* SVG for connections */}
-                            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                              <defs>
-                                <linearGradient id="meshGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                  <stop offset="0%" stopColor="#48EFCF" />
-                                  <stop offset="100%" stopColor="#0B64DD" />
-                                </linearGradient>
-                              </defs>
-                              {/* Connection lines to center */}
-                              <MeshConnection x1={50} y1={50} x2={15} y2={25} color="#48EFCF" delay={0.2} active={queryActive} />
-                              <MeshConnection x1={50} y1={50} x2={85} y2={25} color="#0B64DD" delay={0.3} active={queryActive} />
-                              <MeshConnection x1={50} y1={50} x2={20} y2={75} color="#F04E98" delay={0.4} active={queryActive} />
-                              <MeshConnection x1={50} y1={50} x2={80} y2={75} color="#FEC514" delay={0.5} active={queryActive} />
-                              {/* Cross connections */}
-                              <MeshConnection x1={15} y1={25} x2={85} y2={25} color="#48EFCF" delay={0.6} />
-                              <MeshConnection x1={20} y1={75} x2={80} y2={75} color="#F04E98" delay={0.7} />
-                            </svg>
-
-                            {/* Mesh Nodes */}
-                            <MeshNode x={50} y={50} label="Search" color="#48EFCF" isCenter delay={0.1} isActive={queryActive} />
-                            <MeshNode x={15} y={25} label="US-East" color="#48EFCF" delay={0.2} isActive={queryActive} />
-                            <MeshNode x={85} y={25} label="EU-West" color="#0B64DD" delay={0.3} isActive={queryActive} />
-                            <MeshNode x={20} y={75} label="APAC" color="#F04E98" delay={0.4} isActive={queryActive} />
-                            <MeshNode x={80} y={75} label="Archive" color="#FEC514" delay={0.5} isActive={queryActive} />
-
-                            {/* Flowing particles when mesh is active */}
-                            <div className="absolute inset-0 overflow-hidden">
-                              {Array.from({ length: 20 }).map((_, i) => (
-                                <DataParticle
-                                  key={i}
-                                  id={i}
-                                  initialX={50}
-                                  initialY={50}
-                                  color={particleColors[i % particleColors.length]}
-                                  meshMode={true}
-                                  delay={i * 0.3}
+                        {/* Horizontal Site Visualization */}
+                        <div className="absolute inset-x-0 top-0 bottom-8 flex items-center justify-center">
+                          <div className="relative w-full max-w-5xl h-80">
+                            
+                            {/* Connection lines layer with bidirectional arrows */}
+                            <div className="absolute inset-0 top-0 bottom-8 flex items-center justify-center">
+                              {/* SVG for arrow lines */}
+                              <svg className="absolute inset-0 w-full h-full overflow-visible" preserveAspectRatio="none">
+                                <defs>
+                                  {/* Arrow markers for each color - small and subtle */}
+                                  <marker id="arrowTealLeft" markerWidth="4" markerHeight="4" refX="0" refY="2" orient="auto">
+                                    <path d="M4,0 L0,2 L4,4" fill="none" stroke="#48EFCF" strokeWidth="1" />
+                                  </marker>
+                                  <marker id="arrowTealRight" markerWidth="4" markerHeight="4" refX="4" refY="2" orient="auto">
+                                    <path d="M0,0 L4,2 L0,4" fill="none" stroke="#48EFCF" strokeWidth="1" />
+                                  </marker>
+                                  <marker id="arrowPinkLeft" markerWidth="4" markerHeight="4" refX="0" refY="2" orient="auto">
+                                    <path d="M4,0 L0,2 L4,4" fill="none" stroke="#F04E98" strokeWidth="1" />
+                                  </marker>
+                                  <marker id="arrowPinkRight" markerWidth="4" markerHeight="4" refX="4" refY="2" orient="auto">
+                                    <path d="M0,0 L4,2 L0,4" fill="none" stroke="#F04E98" strokeWidth="1" />
+                                  </marker>
+                                  <marker id="arrowYellowLeft" markerWidth="4" markerHeight="4" refX="0" refY="2" orient="auto">
+                                    <path d="M4,0 L0,2 L4,4" fill="none" stroke="#FEC514" strokeWidth="1" />
+                                  </marker>
+                                  <marker id="arrowYellowRight" markerWidth="4" markerHeight="4" refX="4" refY="2" orient="auto">
+                                    <path d="M0,0 L4,2 L0,4" fill="none" stroke="#FEC514" strokeWidth="1" />
+                                  </marker>
+                                </defs>
+                                
+                                {/* Site 1 to Site 2 arrows - centered on divider at 33.33% */}
+                                <motion.line 
+                                  x1="22%" y1="35%" x2="44%" y2="35%" 
+                                  stroke="#48EFCF" strokeWidth="2"
+                                  markerStart="url(#arrowTealLeft)" markerEnd="url(#arrowTealRight)"
+                                  initial={{ pathLength: 0, opacity: 0 }}
+                                  animate={{ pathLength: 1, opacity: 1 }}
+                                  transition={{ delay: 0.3, duration: 0.5 }}
                                 />
-                              ))}
+                                <motion.line 
+                                  x1="22%" y1="38.5%" x2="44%" y2="38.5%" 
+                                  stroke="#F04E98" strokeWidth="2"
+                                  markerStart="url(#arrowPinkLeft)" markerEnd="url(#arrowPinkRight)"
+                                  initial={{ pathLength: 0, opacity: 0 }}
+                                  animate={{ pathLength: 1, opacity: 1 }}
+                                  transition={{ delay: 0.4, duration: 0.5 }}
+                                />
+                                <motion.line 
+                                  x1="22%" y1="41.5%" x2="44%" y2="41.5%" 
+                                  stroke="#FEC514" strokeWidth="2"
+                                  markerStart="url(#arrowYellowLeft)" markerEnd="url(#arrowYellowRight)"
+                                  initial={{ pathLength: 0, opacity: 0 }}
+                                  animate={{ pathLength: 1, opacity: 1 }}
+                                  transition={{ delay: 0.5, duration: 0.5 }}
+                                />
+                                
+                                {/* Site 2 to Site N arrows - centered on divider at 66.66% */}
+                                <motion.line 
+                                  x1="56%" y1="35%" x2="78%" y2="35%" 
+                                  stroke="#48EFCF" strokeWidth="2"
+                                  markerStart="url(#arrowTealLeft)" markerEnd="url(#arrowTealRight)"
+                                  initial={{ pathLength: 0, opacity: 0 }}
+                                  animate={{ pathLength: 1, opacity: 1 }}
+                                  transition={{ delay: 0.5, duration: 0.5 }}
+                                />
+                                <motion.line 
+                                  x1="56%" y1="38.5%" x2="78%" y2="38.5%" 
+                                  stroke="#F04E98" strokeWidth="2"
+                                  markerStart="url(#arrowPinkLeft)" markerEnd="url(#arrowPinkRight)"
+                                  initial={{ pathLength: 0, opacity: 0 }}
+                                  animate={{ pathLength: 1, opacity: 1 }}
+                                  transition={{ delay: 0.6, duration: 0.5 }}
+                                />
+                                <motion.line 
+                                  x1="56%" y1="41.5%" x2="78%" y2="41.5%" 
+                                  stroke="#FEC514" strokeWidth="2"
+                                  markerStart="url(#arrowYellowLeft)" markerEnd="url(#arrowYellowRight)"
+                                  initial={{ pathLength: 0, opacity: 0 }}
+                                  animate={{ pathLength: 1, opacity: 1 }}
+                                  transition={{ delay: 0.7, duration: 0.5 }}
+                                />
+                              </svg>
+
+                              {/* Dashed vertical dividers */}
+                              <div className="absolute w-px h-3/4 top-[20%]" style={{ left: '33.33%', borderLeft: '2px dashed', borderColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' }} />
+                              <div className="absolute w-px h-3/4 top-[20%]" style={{ left: '67.33%', borderLeft: '2px dashed', borderColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' }} />
+
                             </div>
+                            
+                            {/* Search icons above dividers, centered */}
+                            <motion.div 
+                              className="absolute -translate-x-[0%]" 
+                              style={{ left: '031.33%', top: '0%' }}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.6 }}
+                            >
+                              <div className={`w-10 h-10 rounded-lg border flex items-center justify-center ${isDark ? 'bg-white/5 border-white/20' : 'bg-white border-gray-200'}`}>
+                                <FontAwesomeIcon icon={faMagnifyingGlass} className={`text-base ${isDark ? 'text-white/50' : 'text-gray-400'}`} />
+                              </div>
+                            </motion.div>
+                            <motion.div 
+                              className="absolute -translate-x-1/2" 
+                              style={{ left: '65.25%', top: '0%' }}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.7 }}
+                            >
+                              <div className={`w-10 h-10 rounded-lg border flex items-center justify-center ${isDark ? 'bg-white/5 border-white/20' : 'bg-white border-gray-200'}`}>
+                                <FontAwesomeIcon icon={faMagnifyingGlass} className={`text-base ${isDark ? 'text-white/50' : 'text-gray-400'}`} />
+                              </div>
+                            </motion.div>
+
+                            {/* Site 1 */}
+                            <motion.div 
+                              className="absolute flex flex-col items-center"
+                              style={{ left: '09%', top: '18%' }}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.1 }}
+                            >
+                              {/* Elastic glyph logo */}
+                              <img 
+                                src="/logo-elastic-glyph-color.png" 
+                                alt="Elastic" 
+                                className="w-28 h-28 object-contain"
+                              />
+                              {/* Up arrow showing data flow */}
+                              <motion.div 
+                                className="my-2"
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                              >
+                                <FontAwesomeIcon icon={faArrowUp} className="text-elastic-teal text-lg" />
+                              </motion.div>
+                              {/* Data grid below */}
+                              <div className="w-24 h-14 relative" style={{ transform: 'perspective(150px) rotateX(35deg)' }}>
+                                <div className="absolute inset-0 grid grid-cols-4 gap-0.5">
+                                  {Array.from({ length: 16 }).map((_, i) => (
+                                    <div key={i} className="w-full h-2.5 border border-elastic-teal/50 bg-elastic-teal/10" />
+                                  ))}
+                                </div>
+                              </div>
+                              <span className={`mt-4 text-base font-medium ${isDark ? 'text-white/80' : 'text-elastic-dev-blue/80'}`}>Site 1</span>
+                            </motion.div>
+
+                            {/* Site 2 */}
+                            <motion.div 
+                              className="absolute flex flex-col items-center"
+                              style={{ left: '44.5%', top: '18%' }}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.2 }}
+                            >
+                              <img 
+                                src="/logo-elastic-glyph-color.png" 
+                                alt="Elastic" 
+                                className="w-28 h-28 object-contain"
+                              />
+                              {/* Up arrow showing data flow */}
+                              <motion.div 
+                                className="my-2"
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                              >
+                                <FontAwesomeIcon icon={faArrowUp} className="text-elastic-pink text-lg" />
+                              </motion.div>
+                              <div className="w-24 h-14 relative" style={{ transform: 'perspective(150px) rotateX(35deg)' }}>
+                                <div className="absolute inset-0 grid grid-cols-4 gap-0.5">
+                                  {Array.from({ length: 16 }).map((_, i) => (
+                                    <div key={i} className="w-full h-2.5 border border-elastic-pink/50 bg-elastic-pink/10" />
+                                  ))}
+                                </div>
+                              </div>
+                              <span className={`mt-4 text-base font-medium ${isDark ? 'text-white/80' : 'text-elastic-dev-blue/80'}`}>Site 2</span>
+                            </motion.div>
+
+                            {/* Site N */}
+                            <motion.div 
+                              className="absolute flex flex-col items-center"
+                              style={{ left: '80%', top: '18%' }}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.3 }}
+                            >
+                              <img 
+                                src="/logo-elastic-glyph-color.png" 
+                                alt="Elastic" 
+                                className="w-28 h-28 object-contain"
+                              />
+                              {/* Up arrow showing data flow */}
+                              <motion.div 
+                                className="my-2"
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                              >
+                                <FontAwesomeIcon icon={faArrowUp} className="text-elastic-yellow text-lg" />
+                              </motion.div>
+                              <div className="w-24 h-14 relative" style={{ transform: 'perspective(150px) rotateX(35deg)' }}>
+                                <div className="absolute inset-0 grid grid-cols-4 gap-0.5">
+                                  {Array.from({ length: 16 }).map((_, i) => (
+                                    <div key={i} className="w-full h-2.5 border border-elastic-yellow/50 bg-elastic-yellow/10" />
+                                  ))}
+                                </div>
+                              </div>
+                              <span className={`mt-4 text-base font-medium ${isDark ? 'text-white/80' : 'text-elastic-dev-blue/80'}`}>Site <span className="italic">N</span></span>
+                            </motion.div>
+
+                            {/* Query pulse animation when active - bounces back and forth along connection lines */}
+                            {queryActive && (
+                              <>
+                                {/* Particles on teal line (top) - Site 1 to Site 2 */}
+                                {[0, 1].map((i) => (
+                                  <motion.div
+                                    key={`teal-1-${i}`}
+                                    className="absolute w-3 h-3 rounded-full bg-elastic-teal shadow-lg shadow-elastic-teal/50"
+                                    style={{ top: '30%' }}
+                                    animate={{ left: ['22%', '43%'] }}
+                                    transition={{ duration: 1, delay: i * 0.4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                                  />
+                                ))}
+                                {/* Particles on teal line - Site 2 to Site N */}
+                                {[0, 1].map((i) => (
+                                  <motion.div
+                                    key={`teal-2-${i}`}
+                                    className="absolute w-3 h-3 rounded-full bg-elastic-teal shadow-lg shadow-elastic-teal/50"
+                                    style={{ top: '30%' }}
+                                    animate={{ left: ['56%', '77%'] }}
+                                    transition={{ duration: 1, delay: 0.1 + i * 0.4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                                  />
+                                ))}
+                                
+                                {/* Particles on pink line (middle) - Site 1 to Site 2 */}
+                                {[0, 1].map((i) => (
+                                  <motion.div
+                                    key={`pink-1-${i}`}
+                                    className="absolute w-3 h-3 rounded-full bg-elastic-pink shadow-lg shadow-elastic-pink/50"
+                                    style={{ top: '33%' }}
+                                    animate={{ left: ['22%', '43%'] }}
+                                    transition={{ duration: 1, delay: 0.05 + i * 0.4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                                  />
+                                ))}
+                                {/* Particles on pink line - Site 2 to Site N */}
+                                {[0, 1].map((i) => (
+                                  <motion.div
+                                    key={`pink-2-${i}`}
+                                    className="absolute w-3 h-3 rounded-full bg-elastic-pink shadow-lg shadow-elastic-pink/50"
+                                    style={{ top: '33%' }}
+                                    animate={{ left: ['56%', '77%'] }}
+                                    transition={{ duration: 1, delay: 0.15 + i * 0.4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                                  />
+                                ))}
+                                
+                                {/* Particles on yellow line (bottom) - Site 1 to Site 2 */}
+                                {[0, 1].map((i) => (
+                                  <motion.div
+                                    key={`yellow-1-${i}`}
+                                    className="absolute w-3 h-3 rounded-full bg-elastic-yellow shadow-lg shadow-elastic-yellow/50"
+                                    style={{ top: '35%' }}
+                                    animate={{ left: ['22%', '43%'] }}
+                                    transition={{ duration: 1, delay: 0.1 + i * 0.4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                                  />
+                                ))}
+                                {/* Particles on yellow line - Site 2 to Site N */}
+                                {[0, 1].map((i) => (
+                                  <motion.div
+                                    key={`yellow-2-${i}`}
+                                    className="absolute w-3 h-3 rounded-full bg-elastic-yellow shadow-lg shadow-elastic-yellow/50"
+                                    style={{ top: '35%' }}
+                                    animate={{ left: ['56%', '77%'] }}
+                                    transition={{ duration: 1, delay: 0.2 + i * 0.4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                                  />
+                                ))}
+                              </>
+                            )}
                           </div>
                         </div>
 
-                        {/* Capabilities */}
+                        {/* Capabilities - positioned below the mesh */}
                         <motion.div
-                          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4"
+                          className="absolute bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-6"
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.8 }}
                         >
-                          {/* CCS */}
-                          <div className={`px-4 py-3 rounded-xl border-2 border-elastic-teal bg-elastic-teal/10`}>
-                            <div className="flex items-center gap-2 mb-1">
-                              <FontAwesomeIcon icon={faGlobe} className="text-elastic-teal" />
-                              <span className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-                                Cross-Cluster Search
-                              </span>
-                            </div>
-                            <p className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
-                              Query everywhere at once
-                            </p>
-                          </div>
-
-                          {/* Query Button */}
+                          {/* CCS - links to cross-cluster scene */}
                           <button
-                            onClick={runQuery}
-                            disabled={queryActive}
-                            className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                              queryActive
-                                ? 'bg-elastic-teal/20 text-elastic-teal'
-                                : 'bg-elastic-teal text-white hover:scale-105'
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              navigateToSceneById('cross-cluster')
+                            }}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all hover:scale-105 cursor-pointer ${
+                              isDark ? 'border-elastic-teal/30 bg-elastic-teal/5 hover:border-elastic-teal hover:bg-elastic-teal/10' : 'border-elastic-teal/30 bg-elastic-teal/5 hover:border-elastic-teal hover:bg-elastic-teal/10'
                             }`}
                           >
-                            <FontAwesomeIcon icon={queryActive ? faBolt : faPlay} className="mr-2" />
-                            {queryActive ? 'Querying...' : 'Run Query'}
-                          </button>
-
-                          {/* Searchable Snapshots */}
-                          <div className={`px-4 py-3 rounded-xl border-2 border-elastic-blue bg-elastic-blue/10`}>
-                            <div className="flex items-center gap-2 mb-1">
-                              <FontAwesomeIcon icon={faSnowflake} className="text-elastic-blue" />
-                              <span className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-                                Searchable Snapshots
+                            <FontAwesomeIcon icon={faGlobe} className="text-elastic-teal text-sm" />
+                            <div className="text-left">
+                              <span className={`font-medium text-sm ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                                Cross-Cluster Search
+                              </span>
+                              <span className={`text-xs ml-2 ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}>
+                                Query everywhere
                               </span>
                             </div>
-                            <p className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
-                              PBs at $0.02/GB, always searchable
-                            </p>
-                          </div>
+                          </button>
+
+                          {/* Searchable Snapshots - links to data-tiering scene */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              navigateToSceneById('data-tiering')
+                            }}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all hover:scale-105 cursor-pointer ${
+                              isDark ? 'border-elastic-blue/30 bg-elastic-blue/5 hover:border-elastic-blue hover:bg-elastic-blue/10' : 'border-elastic-blue/30 bg-elastic-blue/5 hover:border-elastic-blue hover:bg-elastic-blue/10'
+                            }`}
+                          >
+                            <FontAwesomeIcon icon={faSnowflake} className="text-elastic-blue text-sm" />
+                            <div className="text-left">
+                              <span className={`font-medium text-sm ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                                Searchable Snapshots
+                              </span>
+                              <span className={`text-xs ml-2 ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}>
+                                $0.02/GB
+                              </span>
+                            </div>
+                          </button>
                         </motion.div>
 
                         {/* Success message during query */}
                         <AnimatePresence>
                           {queryActive && (
                             <motion.div
-                              className="absolute top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl bg-elastic-teal/20 border border-elastic-teal text-elastic-teal font-medium"
-                              initial={{ opacity: 0, y: -20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -20 }}
+                              className="absolute top-4 right-4 px-4 py-2 rounded-lg bg-white/5 border border-white/20 text-white/60 text-sm"
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 20 }}
                             >
-                              <FontAwesomeIcon icon={faBolt} className="mr-2" />
-                              Searching all clusters simultaneously...
+                              <FontAwesomeIcon icon={faBolt} className="mr-2 text-elastic-teal" />
+                              Searching all clusters...
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -1375,13 +1699,13 @@ function DataMeshScene() {
           <button
             onClick={prevStage}
             disabled={stage === 0}
-            className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
+            className={`px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-2 ${
               stage === 0
                 ? isDark ? 'text-white/20' : 'text-elastic-dev-blue/20'
-                : isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-elastic-dev-blue/10 text-elastic-dev-blue hover:bg-elastic-dev-blue/20'
+                : isDark ? 'text-white/50 hover:text-white/80' : 'text-elastic-dev-blue/50 hover:text-elastic-dev-blue/80'
             }`}
           >
-            <FontAwesomeIcon icon={faChevronLeft} />
+            <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
             Previous
           </button>
 
@@ -1398,14 +1722,14 @@ function DataMeshScene() {
           <button
             onClick={nextStage}
             disabled={stage === stages.length - 1}
-            className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
+            className={`px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-2 ${
               stage === stages.length - 1
                 ? isDark ? 'text-white/20' : 'text-elastic-dev-blue/20'
-                : 'bg-elastic-teal text-white hover:scale-105'
+                : isDark ? 'text-white/50 hover:text-white/80' : 'text-elastic-dev-blue/50 hover:text-elastic-dev-blue/80'
             }`}
           >
             Next
-            <FontAwesomeIcon icon={faChevronRight} />
+            <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
           </button>
         </div>
       </div>
@@ -1428,6 +1752,62 @@ function DataMeshScene() {
             title="Start typing animation"
           >
             <FontAwesomeIcon icon={faPlay} className="text-[10px] ml-0.5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Compare/Back button - only shows on stage 3 (workarounds) */}
+      <AnimatePresence>
+        {stage === 3 && (
+          <motion.button
+            onClick={() => {
+              if (showSummary) {
+                setShowSummary(false)
+              } else {
+                setShowSummary(true)
+                setSelectedArchitecture(null)
+              }
+            }}
+            className={`fixed bottom-4 right-14 z-40 h-7 px-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all text-[10px] font-medium ${
+              isDark 
+                ? 'bg-white/5 hover:bg-white/15 text-white/40 hover:text-white/70' 
+                : 'bg-elastic-dev-blue/5 hover:bg-elastic-dev-blue/15 text-elastic-dev-blue/40 hover:text-elastic-dev-blue/70'
+            }`}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            title={showSummary ? "Back to Cards" : "Compare All"}
+          >
+            <FontAwesomeIcon icon={showSummary ? faChevronLeft : faLayerGroup} className="text-[9px]" />
+            {showSummary ? 'Cards' : 'Compare'}
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Run Query button - only shows on stage 4 (solution) when mesh is active */}
+      <AnimatePresence>
+        {stage === 4 && meshActive && (
+          <motion.button
+            onClick={runQuery}
+            disabled={queryActive}
+            className={`fixed bottom-4 right-14 z-40 h-7 px-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all text-[10px] font-medium ${
+              queryActive
+                ? 'bg-elastic-teal/20 text-elastic-teal'
+                : isDark 
+                  ? 'bg-white/5 hover:bg-white/15 text-white/40 hover:text-white/70' 
+                  : 'bg-elastic-dev-blue/5 hover:bg-elastic-dev-blue/15 text-elastic-dev-blue/40 hover:text-elastic-dev-blue/70'
+            }`}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            title="Run Query"
+          >
+            <FontAwesomeIcon icon={queryActive ? faBolt : faPlay} className="text-[9px]" />
+            {queryActive ? 'Running' : 'Query'}
           </motion.button>
         )}
       </AnimatePresence>
