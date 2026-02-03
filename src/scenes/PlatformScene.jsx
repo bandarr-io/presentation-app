@@ -230,10 +230,10 @@ function PlatformScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             The Platform
           </span>
-          <h2 className={`text-3xl md:text-4xl font-bold mt-1 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-3xl md:text-4xl font-extrabold mt-1 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             <span className="gradient-text">Comprehensive data ingestion</span> for{' '}
             <span className="underline decoration-elastic-teal decoration-2 underline-offset-4">unified, actionable insights</span>
           </h2>
@@ -414,7 +414,7 @@ function PlatformScene() {
                     </div>
                     <div className="flex-1">
                       <div 
-                        className="text-[10px] font-mono uppercase tracking-wider"
+                        className="text-eyebrow text-[10px]"
                         style={{ color: solution.color }}
                       >
                         {solution.tagline}

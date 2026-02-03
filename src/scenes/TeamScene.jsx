@@ -75,13 +75,13 @@ function TeamScene() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-pink text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Your Support
           </span>
-          <h2 className={`text-5xl md:text-6xl font-bold mt-4 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-5xl md:text-6xl font-extrabold mt-4 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             Meet Your <span className="gradient-text">Elastic Team</span>
           </h2>
-          <p className={`text-xl mt-4 max-w-2xl mx-auto ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/60'}`}>
+          <p className={`text-paragraph text-xl mt-4 max-w-2xl mx-auto ${isDark ? 'text-elastic-light-grey/80' : 'text-elastic-ink'}`}>
             Before we dive in—here's who you'll be working with today
           </p>
         </motion.div>
@@ -158,10 +158,10 @@ function TeamScene() {
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className={`text-xl font-bold mb-1 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                    <h3 className={`text-headline text-xl font-bold mb-1 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
                       {member.name}
                     </h3>
-                    <p className={`text-sm mb-4 ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/60'}`}>
+                    <p className={`text-paragraph text-sm mb-4 ${isDark ? 'text-elastic-light-grey/70' : 'text-elastic-ink'}`}>
                       {member.role}
                     </p>
 

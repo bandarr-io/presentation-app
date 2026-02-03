@@ -30,13 +30,13 @@ function AboutElasticScene() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-blue text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Who We Are
           </span>
-          <h2 className={`text-5xl md:text-6xl font-bold mt-4 mb-5 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-5xl md:text-6xl font-extrabold mt-4 mb-5 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             About <span className="gradient-text">Elastic</span>
           </h2>
-          <p className={`text-lg md:text-xl max-w-3xl mx-auto ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
+          <p className={`text-paragraph text-lg md:text-xl max-w-3xl mx-auto ${isDark ? 'text-elastic-light-grey' : 'text-elastic-ink'}`}>
             The Search AI Company—powering search, observability, and security for thousands of organizations worldwide.
           </p>
         </motion.div>
@@ -69,13 +69,13 @@ function AboutElasticScene() {
                 }}
               />
               
-              <div className={`text-5xl md:text-6xl font-bold mb-2 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
+              <div className={`text-code text-5xl md:text-6xl font-bold mb-2 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
                 {stat.value}
               </div>
-              <div className={`text-xl font-semibold mb-1 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+              <div className={`text-headline text-xl font-bold mb-1 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
                 {stat.label}
               </div>
-              <div className={`text-base ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/50'}`}>
+              <div className={`text-paragraph text-base ${isDark ? 'text-elastic-light-grey/60' : 'text-elastic-ink/70'}`}>
                 {stat.description}
               </div>
             </motion.div>
@@ -105,10 +105,10 @@ function AboutElasticScene() {
               <div className="text-2xl mb-3" style={{ color: item.color }}>
                 <FontAwesomeIcon icon={item.icon} />
               </div>
-              <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+              <h3 className={`text-headline text-lg font-bold mb-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
                 {item.title}
               </h3>
-              <p className={`text-base ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/60'}`}>
+              <p className={`text-paragraph text-base ${isDark ? 'text-elastic-light-grey/70' : 'text-elastic-ink'}`}>
                 {item.desc}
               </p>
             </motion.div>

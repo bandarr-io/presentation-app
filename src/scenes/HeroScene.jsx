@@ -228,12 +228,12 @@ function HeroScene() {
 
               {/* Main title */}
               <motion.h1
-                className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
+                className="text-headline text-5xl md:text-7xl font-extrabold mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <span className={isDark ? 'text-white' : 'text-elastic-dev-blue'}>The Elastic Search AI Platform:</span>
+                <span className={isDark ? 'text-white' : 'text-elastic-dark-ink'}>The Elastic Search AI Platform:</span>
                 <br />
                 <motion.span 
                   className="gradient-text"
@@ -247,8 +247,8 @@ function HeroScene() {
 
               {/* Subtitle */}
               <motion.p
-                className={`text-xl md:text-2xl max-w-3xl mx-auto ${
-                  isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'
+                className={`text-paragraph text-xl md:text-2xl max-w-3xl mx-auto ${
+                  isDark ? 'text-elastic-light-grey' : 'text-elastic-ink'
                 }`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

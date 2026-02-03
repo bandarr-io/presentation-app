@@ -99,13 +99,13 @@ function UnifiedStrategyScene() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-blue text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             The Elastic Search AI Platform
           </span>
-          <h2 className={`text-4xl md:text-5xl font-bold mt-4 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-4xl md:text-5xl font-extrabold mt-4 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             <span className="gradient-text">All Your Data</span>, Real-Time, At Scale
           </h2>
-          <p className={`text-lg mt-3 max-w-2xl mx-auto ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/60'}`}>
+          <p className={`text-paragraph text-lg mt-3 max-w-2xl mx-auto ${isDark ? 'text-elastic-light-grey/80' : 'text-elastic-ink'}`}>
             Accelerate mission outcomes by finding insights from any data source
           </p>
         </motion.div>
@@ -393,10 +393,10 @@ function UnifiedStrategyScene() {
                 className="w-2 h-2 rounded-full mb-3"
                 style={{ backgroundColor: prop.color }}
               />
-              <h3 className={`text-lg font-semibold mb-1 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+              <h3 className={`text-headline text-lg font-bold mb-1 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
                 {prop.title}
               </h3>
-              <p className={`text-sm ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/60'}`}>
+              <p className={`text-paragraph text-sm ${isDark ? 'text-elastic-light-grey/70' : 'text-elastic-ink'}`}>
                 {prop.desc}
               </p>
             </motion.div>

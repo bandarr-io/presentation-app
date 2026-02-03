@@ -3,20 +3,34 @@
 @tailwind utilities;
 
 :root {
-  /* Elastic Brand Colors */
-  --elastic-midnight: #153385;
+  /* Elastic Brand Colors - Core */
   --elastic-blue: #0B64DD;
   --elastic-teal: #48EFCF;
-  --elastic-yellow: #FEC514;
-  --elastic-pink: #F04E98;
   --elastic-poppy: #FF957D;
+  --elastic-pink: #F04E98;
+  --elastic-yellow: #FEC514;
+  --elastic-midnight: #153385;
   --elastic-dev-blue: #101C3F;
+  
+  /* Elastic Brand Colors - Text */
   --elastic-dark-ink: #1C1E23;
-  --elastic-light-grey: #F5F7FA;
+  --elastic-ink: #343741;
   --elastic-white: #FFFFFF;
+  
+  /* Elastic Brand Colors - Backgrounds */
+  --elastic-light-grey: #F5F7FA;
+  
+  /* Typography specs */
+  --line-height-headline: 1.14;
+  --line-height-paragraph: 1.55;
+  --letter-spacing-eyebrow: 0.08em;
 }
 
-/* Dark theme (default) */
+/* Dark theme (default) - Brand aligned:
+   Background: Developer Blue (#101C3F)
+   Headlines: White (#FFFFFF)
+   Paragraphs: Light Gray (#F5F7FA)
+   Eyebrows/Accents: Light Teal (#48EFCF) */
 :root.dark {
   --bg-primary: #101C3F;
   --bg-secondary: #1C1E23;
@@ -24,14 +38,19 @@
   --bg-card-hover: rgba(255, 255, 255, 0.05);
   --border-color: rgba(255, 255, 255, 0.1);
   --border-hover: rgba(255, 255, 255, 0.2);
-  --text-primary: #FFFFFF;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.4);
+  --text-primary: #FFFFFF;         /* White for headlines */
+  --text-secondary: #F5F7FA;       /* Light Gray for paragraphs */
+  --text-muted: rgba(245, 247, 250, 0.6);
+  --text-eyebrow: #48EFCF;         /* Light Teal for eyebrows */
   --orb-opacity: 0.08;
   --grid-opacity: 0.02;
 }
 
-/* Light theme */
+/* Light theme - Brand aligned:
+   Background: Light Gray (#F5F7FA) or White (#FFFFFF)
+   Headlines: Dark Ink (#1C1E23)
+   Paragraphs: Ink (#343741)
+   Eyebrows/Accents: Elastic Blue (#0B64DD) */
 :root.light {
   --bg-primary: #F5F7FA;
   --bg-secondary: #FFFFFF;
@@ -39,9 +58,10 @@
   --bg-card-hover: rgba(255, 255, 255, 0.95);
   --border-color: rgba(16, 28, 63, 0.1);
   --border-hover: rgba(16, 28, 63, 0.2);
-  --text-primary: #101C3F;
-  --text-secondary: rgba(16, 28, 63, 0.7);
-  --text-muted: rgba(16, 28, 63, 0.5);
+  --text-primary: #1C1E23;   /* Dark Ink for headlines */
+  --text-secondary: #343741; /* Ink for paragraphs */
+  --text-muted: rgba(52, 55, 65, 0.6);
+  --text-eyebrow: #0B64DD;   /* Elastic Blue for eyebrows */
   --orb-opacity: 0.15;
   --grid-opacity: 0.03;
 }
@@ -56,13 +76,56 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: var(--line-height-paragraph);
+}
+
+/* ===========================
+   Elastic Brand Typography
+   =========================== */
+
+/* Eyebrow text - Inter Bold, 8% tracking, uppercase */
+.text-eyebrow {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: var(--letter-spacing-eyebrow);
+  text-transform: uppercase;
+  font-size: 0.875rem; /* 14px base */
+}
+
+/* Headline text - Mier B Extrabold (with Inter fallback), 114% line-height */
+.text-headline {
+  font-family: 'Mier B', 'Inter', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: var(--line-height-headline);
+}
+
+/* Paragraph text - Inter Regular, 155% line-height */
+.text-paragraph {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: var(--line-height-paragraph);
+}
+
+/* Caption text - Inter Regular, 155% line-height */
+.text-caption {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: var(--line-height-paragraph);
+}
+
+/* Code/numerals - Space Mono */
+.text-code {
+  font-family: 'Space Mono', monospace;
 }
 
 /* Custom scrollbar - Dark */

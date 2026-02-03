@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons'
 import { useTheme } from './context/ThemeContext'
 import HeroScene from './scenes/HeroScene'
 import AgendaScene from './scenes/AgendaScene'
@@ -53,7 +55,7 @@ const scenes = [
 const allScenes = scenes
 
 function App() {
-  const { theme } = useTheme()
+  const { theme, toggleTheme } = useTheme()
   const [currentScene, setCurrentScene] = useState(0)
   const [direction, setDirection] = useState(0)
   const [isReady, setIsReady] = useState(false)
@@ -183,6 +185,19 @@ function App() {
         onNext={nextScene}
         onPrev={prevScene}
       />
+
+      {/* Theme Toggle Button */}
+      <button
+        onClick={toggleTheme}
+        className={`fixed bottom-4 left-4 z-40 w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-lg ${
+          theme === 'dark' 
+            ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white' 
+            : 'bg-elastic-dev-blue/10 hover:bg-elastic-dev-blue/20 text-elastic-dev-blue/70 hover:text-elastic-dev-blue'
+        }`}
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} className="text-sm" />
+      </button>
 
       {/* Scene Settings */}
       <SceneSettings 

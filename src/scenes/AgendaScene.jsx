@@ -37,13 +37,13 @@ function AgendaScene({ scenes = [] }) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-blue text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Overview
           </span>
-          <h2 className={`text-5xl md:text-6xl font-bold mt-4 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-5xl md:text-6xl font-extrabold mt-4 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             Today's <span className="gradient-text">Agenda</span>
           </h2>
-          <p className={`text-lg mt-4 max-w-2xl mx-auto ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
+          <p className={`text-paragraph text-lg mt-4 max-w-2xl mx-auto ${isDark ? 'text-elastic-light-grey' : 'text-elastic-ink'}`}>
             A roadmap for our conversation
           </p>
         </motion.div>
@@ -85,7 +85,7 @@ function AgendaScene({ scenes = [] }) {
               <div className="relative flex items-center gap-4">
                 {/* Number */}
                 <div 
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-mono flex-shrink-0"
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm text-code flex-shrink-0"
                   style={{ 
                     backgroundColor: `${item.color}20`,
                     color: item.color,
@@ -96,11 +96,11 @@ function AgendaScene({ scenes = [] }) {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                  <h3 className={`text-headline text-lg font-bold ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
                     {item.title}
                   </h3>
                   {item.description && (
-                    <p className={`text-sm ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/60'}`}>
+                    <p className={`text-paragraph text-sm ${isDark ? 'text-elastic-light-grey/70' : 'text-elastic-ink'}`}>
                       {item.description}
                     </p>
                   )}

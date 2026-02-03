@@ -253,8 +253,8 @@ function DataTieringScene() {
       <div className="max-w-[98%] mx-auto w-full h-full flex flex-col">
         {/* Header */}
         <motion.div className="text-center mb-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">Intelligent Data Lifecycle</span>
-          <h2 className={`text-3xl md:text-4xl font-bold mt-1 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>Intelligent Data Lifecycle</span>
+          <h2 className={`text-headline text-3xl md:text-4xl font-extrabold mt-1 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             <span className="gradient-text">Your data ages.</span>{' '}
             <span className="underline decoration-elastic-teal decoration-2 underline-offset-4">Your insights shouldn't wait.</span>
           </h2>

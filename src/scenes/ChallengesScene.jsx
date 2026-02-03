@@ -68,20 +68,20 @@ function ChallengesScene() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-pink text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Problem Orientation
           </span>
-          <h2 className={`text-5xl md:text-6xl font-bold mt-4 mb-5 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-5xl md:text-6xl font-extrabold mt-4 mb-5 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             Common <span className="gradient-text">Problem Patterns</span>
           </h2>
           <motion.p
-            className={`text-lg md:text-xl max-w-3xl mx-auto ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}
+            className={`text-paragraph text-lg md:text-xl max-w-3xl mx-auto ${isDark ? 'text-elastic-light-grey' : 'text-elastic-ink'}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
             Elastic is broad, so rather than walk through everything, let's orient around the 
-            <span className={isDark ? ' text-white' : ' text-elastic-dev-blue'}> problems teams typically solve </span> 
+            <span className={isDark ? ' text-white' : ' text-elastic-dark-ink'}> problems teams typically solve </span> 
             with it—then focus on what's most relevant for you.
           </motion.p>
         </motion.div>

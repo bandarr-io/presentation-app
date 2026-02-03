@@ -53,7 +53,7 @@ function DataExplosionScene() {
           animate={{ opacity: 1, y: 0 }}
         >
           <motion.span
-            className="text-elastic-pink text-sm font-mono uppercase tracking-widest"
+            className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
@@ -61,7 +61,7 @@ function DataExplosionScene() {
             The Challenge
           </motion.span>
           <motion.h2
-            className={`text-4xl md:text-5xl font-bold mt-2 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}
+            className={`text-headline text-4xl md:text-5xl font-extrabold mt-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}

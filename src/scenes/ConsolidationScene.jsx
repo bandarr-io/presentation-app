@@ -99,10 +99,10 @@ function ConsolidationScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest block mb-2">
+          <span className={`text-eyebrow text-sm block mb-2 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Unified Platform
           </span>
-          <h2 className={`text-3xl md:text-4xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-3xl md:text-4xl font-extrabold ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             <span className="text-elastic-blue">Consolidate</span> Point Solutions,{' '}
             <span className="text-elastic-pink">Centralize</span> Data Workflows
           </h2>

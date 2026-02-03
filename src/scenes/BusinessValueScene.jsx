@@ -68,11 +68,11 @@ function BusinessValueScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Business Value
           </span>
           <motion.h2 
-            className={`text-4xl md:text-5xl font-bold leading-tight mt-2 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}
+            className={`text-headline text-4xl md:text-5xl font-extrabold mt-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -191,7 +191,7 @@ function BusinessValueScene() {
                     </h3>
 
                     {/* Subtitle */}
-                    <p className={`text-base ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                    <p className={`text-paragraph text-base ${isDark ? 'text-elastic-light-grey/70' : 'text-elastic-ink'}`}>
                       {area.subtitle}
                     </p>
 

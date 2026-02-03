@@ -69,13 +69,13 @@ function CrossClusterScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Distributed Architecture
           </span>
-          <h2 className={`text-4xl md:text-5xl font-bold mt-2 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-4xl md:text-5xl font-extrabold mt-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             Distributed by Design — <span className="gradient-text">Connected by Elastic</span>
           </h2>
-          <p className={`text-lg mt-2 ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
+          <p className={`text-paragraph text-lg mt-2 ${isDark ? 'text-elastic-light-grey' : 'text-elastic-ink'}`}>
             Elastic powers distributed data access with secure, low-latency cross-cluster operations
           </p>
         </motion.div>

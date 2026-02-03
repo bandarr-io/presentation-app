@@ -1,5 +1,18 @@
 import { useTheme } from '../context/ThemeContext'
 
+/**
+ * Brand-aligned theme styles following Elastic Brand Guidelines
+ * 
+ * Dark theme (Developer Blue background):
+ *   - Headlines: White
+ *   - Paragraphs: Light Gray (#F5F7FA)
+ *   - Eyebrows: Light Teal (#48EFCF)
+ * 
+ * Light theme (Light Gray/White background):
+ *   - Headlines: Dark Ink (#1C1E23)
+ *   - Paragraphs: Ink (#343741)
+ *   - Eyebrows: Elastic Blue (#0B64DD)
+ */
 export function useThemeStyles() {
   const { theme } = useTheme()
   const isDark = theme === 'dark'
@@ -7,10 +20,14 @@ export function useThemeStyles() {
   return {
     theme,
     isDark,
-    // Text colors
-    textPrimary: isDark ? 'text-white' : 'text-elastic-dev-blue',
-    textSecondary: isDark ? 'text-white/70' : 'text-elastic-dev-blue/70',
-    textMuted: isDark ? 'text-white/40' : 'text-elastic-dev-blue/50',
+    // Text colors - Brand aligned
+    textHeadline: isDark ? 'text-white' : 'text-elastic-dark-ink',
+    textParagraph: isDark ? 'text-elastic-light-grey' : 'text-elastic-ink',
+    textEyebrow: isDark ? 'text-elastic-teal' : 'text-elastic-blue',
+    // Legacy aliases (for compatibility)
+    textPrimary: isDark ? 'text-white' : 'text-elastic-dark-ink',
+    textSecondary: isDark ? 'text-elastic-light-grey' : 'text-elastic-ink',
+    textMuted: isDark ? 'text-white/40' : 'text-elastic-ink/60',
     textAccent: isDark ? 'text-elastic-teal' : 'text-elastic-blue',
     // Background colors
     bgCard: isDark ? 'bg-white/[0.03]' : 'bg-white/80',
