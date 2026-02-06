@@ -12,6 +12,7 @@ An interactive web presentation showcasing the Elastic Search AI Platform, built
 - **Dark/Light Theme** - Toggle between visual modes (button in bottom-left corner)
 - **Elastic Brand Styling** - Colors, typography, and design aligned with Elastic brand guidelines
 - **Persistent Settings** - Scene and team configuration saved to localStorage
+- **Vercel Web Analytics** - Privacy-friendly analytics integration ready to use (see [Analytics Guide](docs/VERCEL_ANALYTICS.md))
 
 ## Quick Start
 
@@ -150,6 +151,7 @@ npm run preview
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [Framer Motion](https://www.framer.com/motion/) - Animations
 - [FontAwesome](https://fontawesome.com/) - Icons
+- [Vercel Analytics](https://vercel.com/analytics) - Privacy-friendly web analytics
 
 ## Customization
 
@@ -217,6 +219,15 @@ public/
 | `presentation-scene-config` | Scene visibility, order, and durations |
 | `presentation-team-config` | Team member data (including uploaded photos as base64) |
 | `theme` | Dark/light mode preference |
+
+## 📊 Analytics
+
+This project includes **Vercel Web Analytics** for privacy-friendly visitor tracking. The integration is already set up and will automatically start collecting data once you:
+
+1. Deploy to Vercel
+2. Enable Analytics in your Vercel project settings
+
+For detailed information about the analytics integration, configuration options, and how to view your data, see the [Vercel Analytics Guide](docs/VERCEL_ANALYTICS.md).
 
 ---
 
