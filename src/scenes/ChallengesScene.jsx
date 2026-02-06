@@ -97,22 +97,17 @@ function ChallengesScene() {
             <button
               key={category.id}
               onClick={() => setActiveCategory(category)}
-              className={`relative px-8 py-4 rounded-full font-medium text-lg transition-all ${
+              className={`relative px-8 py-4 rounded-full font-medium text-lg transition-all duration-300 ${
                 activeCategory.id === category.id
                   ? 'text-white'
                   : isDark 
                     ? 'text-white/60 hover:text-white/80 bg-white/5' 
                     : 'text-elastic-dev-blue/60 hover:text-elastic-dev-blue/80 bg-elastic-dev-blue/5'
               }`}
+              style={{
+                backgroundColor: activeCategory.id === category.id ? category.color : undefined,
+              }}
             >
-              {activeCategory.id === category.id && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute inset-0 rounded-full"
-                  style={{ backgroundColor: category.color }}
-                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                />
-              )}
               <span className="relative z-10 flex items-center gap-3">
                 {category.icon}
                 {category.name}
@@ -122,14 +117,14 @@ function ChallengesScene() {
         </motion.div>
 
         {/* Patterns grid */}
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={activeCategory.id}
             className="grid md:grid-cols-2 gap-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
           >
             {activeCategory.patterns.map((pattern, index) => (
               <motion.div
