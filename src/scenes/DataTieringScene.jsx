@@ -253,8 +253,8 @@ function DataTieringScene() {
       <div className="max-w-[98%] mx-auto w-full h-full flex flex-col">
         {/* Header */}
         <motion.div className="text-center mb-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">Intelligent Data Lifecycle</span>
-          <h2 className={`text-3xl md:text-4xl font-bold mt-1 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>Intelligent Data Lifecycle</span>
+          <h2 className={`text-headline text-3xl md:text-4xl font-extrabold mt-1 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             <span className="gradient-text">Your data ages.</span>{' '}
             <span className="underline decoration-elastic-teal decoration-2 underline-offset-4">Your insights shouldn't wait.</span>
           </h2>
@@ -343,7 +343,13 @@ function DataTieringScene() {
             
             <motion.button
               onClick={() => setIsRunning(!isRunning)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${isRunning ? 'bg-elastic-pink/30 text-elastic-pink' : 'bg-elastic-teal/30 text-elastic-teal hover:bg-elastic-teal/40'}`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                isRunning 
+                  ? 'bg-elastic-pink/30 text-elastic-pink' 
+                  : isDark 
+                    ? 'bg-elastic-teal/30 text-elastic-teal hover:bg-elastic-teal/40'
+                    : 'bg-elastic-blue/30 text-elastic-blue hover:bg-elastic-blue/40'
+              }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -367,7 +373,7 @@ function DataTieringScene() {
                 exit={{ opacity: 0, y: -5 }}
                 className="text-lg mt-2"
               >
-                <span className="text-elastic-teal font-semibold">No more restores. No more rehydration.</span>
+                <span className={`font-semibold ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>No more restores. No more rehydration.</span>
                 <span className={`${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}> — Search everything, instantly.</span>
               </motion.p>
             ) : (
@@ -569,7 +575,7 @@ function DataTieringScene() {
                             {displayData.painPoint}
                           </div>
                         ) : displayData?.keyBenefit ? (
-                          <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-elastic-teal/10 text-elastic-teal text-xs">
+                          <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${isDark ? 'bg-elastic-teal/10 text-elastic-teal' : 'bg-elastic-blue/10 text-elastic-blue'}`}>
                             <FontAwesomeIcon icon={faCheckCircle} className="text-xs" />
                             {displayData.keyBenefit}
                           </div>
@@ -587,7 +593,7 @@ function DataTieringScene() {
           <motion.div className="mx-8 mt-2 flex items-center justify-between" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
             <span className={`text-xs font-mono uppercase ${isDark ? 'text-elastic-pink' : 'text-elastic-pink'}`}>Newest Data →</span>
             <div className="flex-1 mx-4 h-px bg-gradient-to-r from-pink-500/40 via-blue-500/40 to-teal-400/40" />
-            <span className={`text-xs font-mono uppercase ${isDark ? 'text-elastic-teal' : 'text-elastic-teal'}`}>Oldest Data →</span>
+            <span className={`text-xs font-mono uppercase ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>Oldest Data →</span>
           </motion.div>
 
           {/* Comparison Panel */}
@@ -604,9 +610,9 @@ function DataTieringScene() {
                     transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                     className="grid grid-cols-4 gap-4"
                   >
-                    <div className={`p-3 rounded-xl ${isDark ? 'bg-elastic-teal/10 border border-elastic-teal/30' : 'bg-elastic-teal/20'}`}>
+                    <div className={`p-3 rounded-xl ${isDark ? 'bg-elastic-teal/10 border border-elastic-teal/30' : 'bg-elastic-blue/20 border border-elastic-blue/30'}`}>
                       <div className="flex items-center gap-2 mb-1">
-                        <FontAwesomeIcon icon={faMagnifyingGlassChart} className="text-elastic-teal" />
+                        <FontAwesomeIcon icon={faMagnifyingGlassChart} className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'} />
                         <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>Searchable Snapshots</span>
                       </div>
                       <p className={`text-xs ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>

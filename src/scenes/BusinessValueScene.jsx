@@ -68,19 +68,19 @@ function BusinessValueScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Business Value
           </span>
           <motion.h2 
-            className={`text-4xl md:text-5xl font-bold leading-tight mt-2 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}
+            className={`text-headline text-4xl md:text-5xl font-extrabold mt-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
             Elastic helps organizations in{' '}
             <span className="relative inline-block">
-              <span className="text-elastic-teal">four key areas</span>
+              <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}>four key areas</span>
               <motion.div 
-                className="absolute -bottom-1 left-0 right-0 h-1 bg-elastic-teal/30 rounded-full"
+                className={`absolute -bottom-1 left-0 right-0 h-1 rounded-full ${isDark ? 'bg-elastic-teal/30' : 'bg-elastic-blue/30'}`}
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
@@ -191,7 +191,7 @@ function BusinessValueScene() {
                     </h3>
 
                     {/* Subtitle */}
-                    <p className={`text-base ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                    <p className={`text-paragraph text-base ${isDark ? 'text-elastic-light-grey/70' : 'text-elastic-ink'}`}>
                       {area.subtitle}
                     </p>
 
@@ -286,7 +286,7 @@ function BusinessValueScene() {
                 </div>
                 <p className={`text-2xl leading-relaxed font-medium ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                   Elastic delivers across all four areas with a{' '}
-                  <span className="text-elastic-teal">unified platform</span>.
+                  <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}>unified platform</span>.
                 </p>
               </motion.div>
             ) : (

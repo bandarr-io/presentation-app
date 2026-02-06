@@ -106,10 +106,10 @@ function ESQLScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest block mb-2">
+          <span className={`text-eyebrow text-sm block mb-2 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Elasticsearch | Query Language
           </span>
-          <h2 className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-4xl md:text-5xl font-extrabold ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             <span className="text-elastic-blue">ES|QL</span>: Piped Queries for{' '}
             <span className="text-elastic-pink">Faster Investigations</span>
           </h2>

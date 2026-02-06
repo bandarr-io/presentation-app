@@ -251,10 +251,10 @@ function SchemaScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest block mb-2">
+          <span className={`text-eyebrow text-sm block mb-2 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Elastic Common Schema
           </span>
-          <h2 className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-4xl md:text-5xl font-extrabold ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             Schema on Read vs <span className="gradient-text">Schema on Write</span>
           </h2>
           <p className={`text-lg mt-2 ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
@@ -346,7 +346,7 @@ function SchemaScene() {
             transition={{ delay: 0.4 }}
           >
             {/* Schema on Read button */}
-            <div className="text-center">
+            <div className="flex flex-col items-center">
               <button
                 onClick={runReadSearch}
                 disabled={phase === 'searching-read'}
@@ -373,7 +373,7 @@ function SchemaScene() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
               >
-                <div className="text-3xl font-bold text-elastic-teal">
+                <div className={`text-3xl font-bold ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
                   {Math.round(readTime / writeTime)}x
                 </div>
                 <div className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
@@ -383,14 +383,18 @@ function SchemaScene() {
             )}
 
             {/* Schema on Write button */}
-            <div className="text-center">
+            <div className="flex flex-col items-center">
               <button
                 onClick={runWriteSearch}
                 disabled={phase === 'searching-write'}
                 className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
                   phase === 'searching-write'
-                    ? 'bg-elastic-teal/50 text-white cursor-not-allowed'
-                    : 'bg-gradient-to-r from-elastic-teal to-elastic-blue text-white hover:scale-110'
+                    ? isDark 
+                      ? 'bg-elastic-teal/50 text-white cursor-not-allowed'
+                      : 'bg-elastic-blue/50 text-white cursor-not-allowed'
+                    : isDark
+                      ? 'bg-gradient-to-r from-elastic-teal to-elastic-blue text-white hover:scale-110'
+                      : 'bg-gradient-to-r from-elastic-dev-blue to-elastic-blue text-white hover:scale-110'
                 }`}
               >
                 <FontAwesomeIcon 
@@ -455,7 +459,7 @@ function SchemaScene() {
             {/* Process explanation */}
             <div className={`p-3 rounded-xl text-sm ${isDark ? 'bg-white/5' : 'bg-elastic-dev-blue/5'}`}>
               <div className="flex items-start gap-2">
-                <FontAwesomeIcon icon={faBolt} className="text-elastic-teal mt-1" />
+                <FontAwesomeIcon icon={faBolt} className={`mt-1 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
                 <div>
                   <div className={`font-medium ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                     "Find all blue squares"
@@ -487,45 +491,50 @@ function SchemaScene() {
           </motion.div>
         </div>
 
-        {/* Bottom insight */}
-        <motion.div 
-          className={`mt-4 p-4 rounded-xl text-center ${isDark ? 'bg-white/[0.03]' : 'bg-white/60'}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <div className={`text-lg font-bold mb-3 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-            Unified Fields for <span className="gradient-text">Unified Intelligence</span>
-          </div>
-          <div className="flex items-center justify-center gap-8 mb-3">
-            <div className="flex items-center gap-3">
-              <FontAwesomeIcon icon={faBox} className="text-elastic-pink text-xl" />
-              <div className="text-left">
-                <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-                  Elastic Common Schema (ECS)
+        {/* Bottom insight - shows after both searches complete */}
+        <AnimatePresence>
+          {readTime > 0 && writeTime > 0 && (
+            <motion.div 
+              className={`mt-4 p-4 rounded-xl text-center ${isDark ? 'bg-white/[0.03]' : 'bg-white/60'}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className={`text-lg font-bold mb-3 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                Unified Fields for <span className="gradient-text">Unified Intelligence</span>
+              </div>
+              <div className="flex items-center justify-center gap-8 mb-3">
+                <div className="flex items-center gap-3">
+                  <FontAwesomeIcon icon={faBox} className="text-elastic-pink text-xl" />
+                  <div className="text-left">
+                    <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                      Elastic Common Schema (ECS)
+                    </div>
+                    <div className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                      Standardized field names across all data sources
+                    </div>
+                  </div>
                 </div>
-                <div className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
-                  Standardized field names across all data sources
+                <div className={`w-px h-10 ${isDark ? 'bg-white/10' : 'bg-elastic-dev-blue/10'}`} />
+                <div className="flex items-center gap-3">
+                  <FontAwesomeIcon icon={faLayerGroup} className="text-elastic-yellow text-xl" />
+                  <div className="text-left">
+                    <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                      Pre-indexed & Normalized
+                    </div>
+                    <div className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
+                      Data ready for instant correlation & search
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className={`w-px h-10 ${isDark ? 'bg-white/10' : 'bg-elastic-dev-blue/10'}`} />
-            <div className="flex items-center gap-3">
-              <FontAwesomeIcon icon={faLayerGroup} className="text-elastic-yellow text-xl" />
-              <div className="text-left">
-                <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-                  Pre-indexed & Normalized
-                </div>
-                <div className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>
-                  Data ready for instant correlation & search
-                </div>
+              <div className={`text-sm ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
+                Enabling consistent search, detection, and response across all your data.
               </div>
-            </div>
-          </div>
-          <div className={`text-sm ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
-            Enabling consistent search, detection, and response across all your data.
-          </div>
-        </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

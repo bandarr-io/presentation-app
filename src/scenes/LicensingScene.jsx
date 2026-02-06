@@ -90,10 +90,10 @@ function LicensingScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest block mb-2">
+          <span className={`text-eyebrow text-sm block mb-2 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Licensing
           </span>
-          <h2 className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-4xl md:text-5xl font-extrabold ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             One License. <span className="gradient-text">Full Power.</span>
           </h2>
           <p className={`text-lg mt-2 ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
@@ -152,8 +152,8 @@ function LicensingScene() {
                   />
                   <defs>
                     <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#48EFCF" />
-                      <stop offset="100%" stopColor="#F04E98" />
+                      <stop offset="0%" stopColor={isDark ? '#48EFCF' : '#0B64DD'} />
+                      <stop offset="100%" stopColor={isDark ? '#F04E98' : '#101C3F'} />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -164,7 +164,7 @@ function LicensingScene() {
                   >
                     <FontAwesomeIcon 
                       icon={isEnterprise ? faLockOpen : faLock} 
-                      className={`text-2xl ${isEnterprise ? 'text-elastic-teal' : isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}
+                      className={`text-2xl ${isEnterprise ? (isDark ? 'text-elastic-teal' : 'text-elastic-blue') : isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}
                     />
                   </motion.div>
                 </div>
@@ -173,15 +173,15 @@ function LicensingScene() {
               {/* No Hidden Costs */}
               <div className="space-y-2">
                 <div className={`flex items-center gap-2 text-sm ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
-                  <FontAwesomeIcon icon={faInfinity} className="text-elastic-teal" />
+                  <FontAwesomeIcon icon={faInfinity} className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'} />
                   <span>No ingestion charges</span>
                 </div>
                 <div className={`flex items-center gap-2 text-sm ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
-                  <FontAwesomeIcon icon={faInfinity} className="text-elastic-teal" />
+                  <FontAwesomeIcon icon={faInfinity} className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'} />
                   <span>No per-user fees</span>
                 </div>
                 <div className={`flex items-center gap-2 text-sm ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
-                  <FontAwesomeIcon icon={faInfinity} className="text-elastic-teal" />
+                  <FontAwesomeIcon icon={faInfinity} className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'} />
                   <span>No data caps</span>
                 </div>
               </div>
@@ -197,15 +197,15 @@ function LicensingScene() {
                 onClick={() => setIsEnterprise(false)}
                 className={`w-full p-3 rounded-xl mb-2 border-2 transition-all text-left ${
                   !isEnterprise 
-                    ? 'border-elastic-teal bg-elastic-teal/10' 
+                    ? isDark ? 'border-elastic-teal bg-elastic-teal/10' : 'border-elastic-blue bg-elastic-blue/10'
                     : isDark ? 'border-white/10 hover:border-white/20' : 'border-elastic-dev-blue/10 hover:border-elastic-dev-blue/20'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${!isEnterprise ? 'bg-elastic-teal' : isDark ? 'bg-white/10' : 'bg-elastic-dev-blue/10'}`}>
-                    <FontAwesomeIcon icon={faCubes} className={!isEnterprise ? 'text-elastic-dev-blue' : isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'} />
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${!isEnterprise ? (isDark ? 'bg-elastic-teal' : 'bg-elastic-blue') : isDark ? 'bg-white/10' : 'bg-elastic-dev-blue/10'}`}>
+                    <FontAwesomeIcon icon={faCubes} className={!isEnterprise ? (isDark ? 'text-elastic-dev-blue' : 'text-white') : isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'} />
                   </div>
-                  <div className={`font-bold ${!isEnterprise ? 'text-elastic-teal' : isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+                  <div className={`font-bold ${!isEnterprise ? (isDark ? 'text-elastic-teal' : 'text-elastic-blue') : isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                     Free & Open
                   </div>
                 </div>
@@ -242,7 +242,7 @@ function LicensingScene() {
             {/* Free & Open Section */}
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-3 h-3 rounded-full bg-elastic-teal" />
+                <div className={`w-3 h-3 rounded-full ${isDark ? 'bg-elastic-teal' : 'bg-elastic-blue'}`} />
                 <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                   Free & Open
                 </span>
@@ -256,7 +256,7 @@ function LicensingScene() {
                     key={feature.name}
                     className={`p-3 rounded-xl border cursor-pointer transition-all ${
                       hoveredFeature === feature.name
-                        ? 'border-elastic-teal bg-elastic-teal/10 scale-105'
+                        ? isDark ? 'border-elastic-teal bg-elastic-teal/10 scale-105' : 'border-elastic-blue bg-elastic-blue/10 scale-105'
                         : isDark ? 'border-white/10 bg-white/[0.02] hover:border-white/20' : 'border-elastic-dev-blue/10 bg-white hover:border-elastic-dev-blue/20'
                     }`}
                     initial={{ opacity: 0, y: 20 }}
@@ -267,11 +267,17 @@ function LicensingScene() {
                   >
                     <div className="flex items-start gap-2">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        hoveredFeature === feature.name ? 'bg-elastic-teal' : 'bg-elastic-teal/20'
+                        isDark
+                          ? hoveredFeature === feature.name ? 'bg-elastic-teal' : 'bg-elastic-teal/20'
+                          : hoveredFeature === feature.name ? 'bg-elastic-blue' : 'bg-elastic-blue/20'
                       }`}>
                         <FontAwesomeIcon 
                           icon={feature.icon} 
-                          className={`text-sm ${hoveredFeature === feature.name ? 'text-elastic-dev-blue' : 'text-elastic-teal'}`}
+                          className={`text-sm ${
+                            isDark
+                              ? hoveredFeature === feature.name ? 'text-elastic-dev-blue' : 'text-elastic-teal'
+                              : hoveredFeature === feature.name ? 'text-white' : 'text-elastic-blue'
+                          }`}
                         />
                       </div>
                       <div className="min-w-0">

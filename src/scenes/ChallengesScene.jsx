@@ -68,20 +68,20 @@ function ChallengesScene() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-pink text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Problem Orientation
           </span>
-          <h2 className={`text-5xl md:text-6xl font-bold mt-4 mb-5 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-5xl md:text-6xl font-extrabold mt-4 mb-5 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             Common <span className="gradient-text">Problem Patterns</span>
           </h2>
           <motion.p
-            className={`text-lg md:text-xl max-w-3xl mx-auto ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}
+            className={`text-paragraph text-lg md:text-xl max-w-3xl mx-auto ${isDark ? 'text-elastic-light-grey' : 'text-elastic-ink'}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
             Elastic is broad, so rather than walk through everything, let's orient around the 
-            <span className={isDark ? ' text-white' : ' text-elastic-dev-blue'}> problems teams typically solve </span> 
+            <span className={isDark ? ' text-white' : ' text-elastic-dark-ink'}> problems teams typically solve </span> 
             with it—then focus on what's most relevant for you.
           </motion.p>
         </motion.div>
@@ -150,7 +150,9 @@ function ChallengesScene() {
                 <motion.div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{
-                    background: `radial-gradient(circle at 50% 50%, ${activeCategory.color}15, transparent 70%)`,
+                    background: isDark 
+                      ? `radial-gradient(circle at 50% 50%, ${activeCategory.color}15, transparent 70%)`
+                      : `radial-gradient(circle at 50% 50%, rgba(11, 100, 221, 0.1), transparent 70%)`,
                   }}
                 />
 
@@ -158,8 +160,8 @@ function ChallengesScene() {
                 <div
                   className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center text-base font-mono"
                   style={{ 
-                    backgroundColor: `${activeCategory.color}20`,
-                    color: activeCategory.color,
+                    backgroundColor: isDark ? `${activeCategory.color}20` : 'rgba(11, 100, 221, 0.1)',
+                    color: isDark ? activeCategory.color : '#0B64DD',
                   }}
                 >
                   {String(index + 1).padStart(2, '0')}

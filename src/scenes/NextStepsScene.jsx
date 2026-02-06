@@ -41,10 +41,10 @@ function NextStepsScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Your Journey
           </span>
-          <h2 className={`text-5xl md:text-6xl font-bold mt-2 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-5xl md:text-6xl font-extrabold mt-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             Let's Get <span className="gradient-text">Started</span>
           </h2>
         </motion.div>
@@ -61,7 +61,7 @@ function NextStepsScene() {
           
           {/* Progress line */}
           <motion.div
-            className="absolute top-7 left-0 h-0.5 bg-gradient-to-r from-elastic-teal via-elastic-blue to-elastic-pink hidden md:block"
+            className={`absolute top-7 left-0 h-0.5 hidden md:block ${isDark ? 'bg-gradient-to-r from-elastic-teal via-elastic-blue to-elastic-pink' : 'bg-gradient-to-r from-elastic-dev-blue via-elastic-blue to-elastic-blue'}`}
             initial={{ width: 0 }}
             animate={{ width: `${((activeStep + 1) / journeySteps.length) * 100}%` }}
             transition={{ duration: 0.4 }}

@@ -28,11 +28,14 @@ import {
   faPause,
   faServer,
   faDatabase,
+  faBolt,
+  faArrowsRotate,
+  faStop,
+  faCheckCircle,
   faCloud,
   faStopCircle,
   faCircle,
-  faCheckCircle,
-  faBolt
+  faTrashCan
 } from '@fortawesome/free-solid-svg-icons'
 
 // Data sources for the zero-downtime diagram
@@ -51,7 +54,6 @@ const dataSources = [
 const shippers = [
   { name: 'Logstash', color: '#F1B400' },
   { name: 'Elastic Agent', color: '#48EFCF' },
-  { name: 'OOTB Integrations', color: '#F04E98' },
   { name: 'OOTB Integrations', color: '#F04E98' },
 ]
 
@@ -113,6 +115,8 @@ function ZeroDowntimeDemo({ isDark }) {
   const particleIdRef = useRef(0)
   const [particles, setParticles] = useState([])
   const [cutoverProgress, setCutoverProgress] = useState(0)
+  const [isElasticDeployed, setIsElasticDeployed] = useState(false)
+  const [isLegacyRemoved, setIsLegacyRemoved] = useState(false)
 
   // Spawn particles continuously
   useEffect(() => {
@@ -120,12 +124,12 @@ function ZeroDowntimeDemo({ isDark }) {
       const newParticle = {
         id: particleIdRef.current++,
         toLegacy: cutoverState === 'parallel' || cutoverState === 'preparing',
-        toElastic: true
+        toElastic: isElasticDeployed
       }
       setParticles(prev => [...prev.slice(-10), newParticle])
     }, 600)
     return () => clearInterval(interval)
-  }, [cutoverState])
+  }, [cutoverState, isElasticDeployed])
 
   // Progress bar animation during cutover
   useEffect(() => {
@@ -162,6 +166,8 @@ function ZeroDowntimeDemo({ isDark }) {
     setCutoverState('parallel')
     setCutoverProgress(0)
     setParticles([])
+    setIsElasticDeployed(false)
+    setIsLegacyRemoved(false)
   }
 
   const isComplete = cutoverState === 'complete'
@@ -170,7 +176,7 @@ function ZeroDowntimeDemo({ isDark }) {
 
   // Status messages for each stage
   const statusMessages = {
-    parallel: 'Both systems receiving data simultaneously',
+    parallel: isElasticDeployed ? 'Both systems receiving data simultaneously' : 'Legacy system receiving data',
     preparing: 'Preparing cutover sequence...',
     stopping: 'Stopping legacy writes...',
     validating: 'Validating data integrity...',
@@ -179,23 +185,27 @@ function ZeroDowntimeDemo({ isDark }) {
 
   // Badge content for each stage
   const badgeContent = {
-    parallel: '⚡ Dual-Write Active',
-    preparing: '🔄 Preparing Cutover...',
-    stopping: '🛑 Stopping Legacy...',
-    validating: '✓ Validating Data...',
-    complete: '✓ Migration Complete'
+    parallel: isElasticDeployed 
+      ? <><FontAwesomeIcon icon={faBolt} className="mr-1.5" /> Dual-Write Active</>
+      : <><FontAwesomeIcon icon={faDatabase} className="mr-1.5" /> Legacy Active</>,
+    preparing: <><FontAwesomeIcon icon={faArrowsRotate} className="mr-1.5 animate-spin" /> Preparing Cutover...</>,
+    stopping: <><FontAwesomeIcon icon={faStop} className="mr-1.5" /> Stopping Legacy...</>,
+    validating: <><FontAwesomeIcon icon={faCheckCircle} className="mr-1.5" /> Validating Data...</>,
+    complete: <><FontAwesomeIcon icon={faCheckCircle} className="mr-1.5" /> Migration Complete</>
   }
 
   return (
-    <motion.div
-      key="approach"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className={`flex-1 rounded-2xl border p-6 relative overflow-hidden mx-auto ${isDark ? 'bg-white/[0.02] border-white/10' : 'bg-white/80 border-elastic-dev-blue/10'}`}
-      style={{ width: '1100px', maxWidth: '100%' }}
-    >
-      {/* Header with Live Counter & Status Badge - 3 column layout */}
+    <div className="flex-1 flex flex-col gap-4">
+      {/* Main Visualization Container */}
+      <motion.div
+        key="approach"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className={`rounded-2xl border p-6 relative overflow-hidden mx-auto ${isDark ? 'bg-white/[0.02] border-white/10' : 'bg-white/80 border-elastic-dev-blue/10'}`}
+        style={{ width: '1100px', maxWidth: '100%' }}
+      >
+        {/* Header with Live Counter & Status Badge - 3 column layout */}
       <div className="flex items-center justify-between mb-4">
         {/* Left - Title */}
         <div>
@@ -207,13 +217,14 @@ function ZeroDowntimeDemo({ isDark }) {
           </p>
         </div>
         
-        {/* Center - Status Badge & Progress */}
+        {/* Center - Status Badge, Deploy Button & Progress */}
         <div className="flex items-center gap-3">
           <motion.div
             className={`px-4 py-2 rounded-full text-sm font-bold transition-colors duration-500 ${
               isComplete ? 'bg-elastic-teal/20 text-elastic-teal' :
               cutoverState === 'stopping' ? 'bg-red-500/20 text-red-400' :
               isCutting ? 'bg-yellow-500/20 text-yellow-400' :
+              !isElasticDeployed ? 'bg-orange-500/20 text-orange-400' :
               'bg-elastic-blue/20 text-elastic-blue'
             }`}
             animate={isCutting ? { scale: [1, 1.02, 1] } : {}}
@@ -221,6 +232,28 @@ function ZeroDowntimeDemo({ isDark }) {
           >
             {badgeContent[cutoverState]}
           </motion.div>
+          
+          {/* Deploy Elastic Button - shows when not deployed */}
+          <AnimatePresence>
+            {!isElasticDeployed && (
+              <motion.button
+                onClick={() => setIsElasticDeployed(true)}
+                className={`px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 transition-all ${
+                  isDark 
+                    ? 'bg-elastic-teal text-elastic-dev-blue hover:bg-elastic-teal/90' 
+                    : 'bg-elastic-blue text-white hover:bg-elastic-blue/90'
+                }`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FontAwesomeIcon icon={faRocket} />
+                Deploy Elastic
+              </motion.button>
+            )}
+          </AnimatePresence>
           
           {/* Progress Bar during cutover */}
           {isCutting && (
@@ -231,7 +264,7 @@ function ZeroDowntimeDemo({ isDark }) {
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               <motion.div 
-                className="h-full bg-gradient-to-r from-elastic-pink to-elastic-teal rounded-full"
+                className={`h-full rounded-full ${isDark ? 'bg-gradient-to-r from-elastic-pink to-elastic-teal' : 'bg-gradient-to-r from-elastic-dev-blue to-elastic-blue'}`}
                 initial={{ width: '0%' }}
                 animate={{ width: `${cutoverProgress}%` }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -280,7 +313,7 @@ function ZeroDowntimeDemo({ isDark }) {
         {/* Arrow: Sources → Shippers */}
         <div className="flex-shrink-0 relative self-center -mx-5">
           <motion.div 
-            className="w-24 h-1 bg-gradient-to-r from-elastic-blue to-elastic-teal rounded"
+            className={`w-24 h-1 rounded ${isDark ? 'bg-gradient-to-r from-elastic-blue to-elastic-teal' : 'bg-gradient-to-r from-elastic-dev-blue to-elastic-blue'}`}
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: 0.3 }}
@@ -307,72 +340,115 @@ function ZeroDowntimeDemo({ isDark }) {
 
         {/* Shippers - Central Hub */}
         <motion.div
-          className={`flex-shrink-0 px-5 py-4 rounded-2xl border-2 border-elastic-teal/60 self-stretch flex flex-col ${isDark ? 'bg-elastic-teal/15' : 'bg-elastic-teal/25'}`}
+          className={`flex-shrink-0 px-5 py-4 rounded-2xl border-2 self-stretch flex flex-col transition-all duration-1000 ease-out ${
+            isElasticDeployed 
+              ? isDark ? 'border-elastic-teal/60 bg-elastic-teal/15' : 'border-elastic-blue/60 bg-elastic-blue/15'
+              : isDark ? 'border-orange-500/40 bg-orange-500/10' : 'border-orange-500/40 bg-orange-500/10'
+          }`}
           style={{ minWidth: '150px' }}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="text-elastic-teal font-bold text-center text-sm mb-3">Shippers</div>
+          <div className={`font-bold text-center text-sm mb-3 transition-colors duration-1000 ease-out ${
+            isElasticDeployed
+              ? isDark ? 'text-elastic-teal' : 'text-elastic-blue'
+              : 'text-orange-500'
+          }`}>
+            {isElasticDeployed ? 'Data Pipelines' : 'Data Pipeline'}
+          </div>
           <div className="space-y-2 flex-1 flex flex-col justify-center">
-            {shippers.map((shipper, index) => (
-              <motion.div
-                key={shipper.name}
-                className={`px-3 py-1.5 rounded-lg flex items-center gap-2 ${isDark ? 'bg-white/[0.08]' : 'bg-white/70'}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 + index * 0.1 }}
-              >
-                <motion.div 
-                  className="w-2.5 h-2.5 rounded-full" 
-                  style={{ backgroundColor: shipper.color }}
-                  animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
-                  transition={{ duration: 1, repeat: Infinity, delay: index * 0.3 }}
-                />
-                <span className={`text-xs font-medium ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>{shipper.name}</span>
-              </motion.div>
-            ))}
+            {/* Existing Pipeline - always shown */}
+            <motion.div
+              className={`px-3 py-2 rounded-lg flex items-center gap-2 ${isDark ? 'bg-white/[0.08]' : 'bg-white/70'}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <motion.div 
+                className="w-2.5 h-2.5 rounded-full bg-orange-400"
+                animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              />
+              <span className={`text-xs font-medium ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>Existing Pipeline</span>
+            </motion.div>
+            
+            {/* Elastic Shippers - shown when deployed */}
+            <AnimatePresence>
+              {isElasticDeployed && shippers.map((shipper, index) => (
+                <motion.div
+                  key={shipper.name}
+                  className={`px-3 py-1.5 rounded-lg flex items-center gap-2 ${isDark ? 'bg-white/[0.08]' : 'bg-white/70'}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ delay: 0.5 + index * 0.15, duration: 0.4 }}
+                >
+                  <motion.div 
+                    className="w-2.5 h-2.5 rounded-full" 
+                    style={{ backgroundColor: shipper.color }}
+                    animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                    transition={{ duration: 1, repeat: Infinity, delay: index * 0.3 }}
+                  />
+                  <span className={`text-xs font-medium ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>{shipper.name}</span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </motion.div>
 
         {/* Dual Output Section - Legacy (top) and Elastic (bottom) + Success Message */}
         <div className="flex gap-4 self-stretch -ml-4">
-          <div className="flex flex-col gap-3 relative self-stretch" style={{ minWidth: '280px', maxWidth: '320px' }}>
+          <div className={`flex flex-col relative self-stretch transition-all duration-1000 ease-out ${isElasticDeployed ? 'gap-3' : 'justify-center'}`} style={{ minWidth: '280px', maxWidth: '320px' }}>
           
           {/* Connection Lines Container */}
           <div className="absolute left-0 top-0 bottom-0 w-20 pointer-events-none">
-            {/* Line to Legacy - color matches cutover state */}
-            <motion.div 
-              className={`absolute left-0 top-[25%] w-full h-0.5 rounded transition-colors duration-500 ${
-                isComplete ? 'bg-gray-500/30' : 
-                cutoverState === 'stopping' ? 'bg-red-500/80' :
-                cutoverState === 'validating' ? 'bg-yellow-500/80' :
-                'bg-orange-500/60'
-              }`}
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1, opacity: isComplete ? 0.3 : 1 }}
-              style={{ transformOrigin: 'left' }}
-              transition={{ delay: 0.5 }}
-            />
-            {/* Line to Elastic */}
-            <motion.div 
-              className="absolute left-0 top-[75%] w-full h-1 bg-gradient-to-r from-elastic-teal to-elastic-teal rounded"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              style={{ transformOrigin: 'left' }}
-              transition={{ delay: 0.5 }}
-            />
-            
-            {/* Particles to Legacy - color matches cutover state */}
+            {/* Line to Legacy - centered when Elastic not deployed, at 25% when deployed */}
             <AnimatePresence>
-              {isLegacyReceiving && particles.slice(-2).map((p, i) => (
+              {!isLegacyRemoved && (
+                <motion.div 
+                  className={`absolute left-0 w-full h-0.5 rounded transition-colors duration-500 ${
+                    isComplete ? 'bg-gray-500/30' : 
+                    cutoverState === 'stopping' ? 'bg-red-500/80' :
+                    cutoverState === 'validating' ? 'bg-yellow-500/80' :
+                    'bg-orange-500/60'
+                  }`}
+                  initial={{ scaleX: 0, top: '50%' }}
+                  animate={{ 
+                    scaleX: 1, 
+                    opacity: isComplete ? 0.3 : 1,
+                    top: isElasticDeployed ? '25%' : '50%'
+                  }}
+                  exit={{ scaleX: 0, opacity: 0 }}
+                  style={{ transformOrigin: 'left' }}
+                  transition={{ delay: 0.3, top: { duration: 1, ease: 'easeInOut' } }}
+                />
+              )}
+            </AnimatePresence>
+            {/* Line to Elastic - only show when deployed */}
+            {isElasticDeployed && (
+              <motion.div 
+                className={`absolute left-0 w-full h-1 rounded ${isDark ? 'bg-gradient-to-r from-elastic-teal to-elastic-teal' : 'bg-gradient-to-r from-elastic-blue to-elastic-blue'}`}
+                initial={{ scaleX: 0 }}
+                animate={{ 
+                  scaleX: 1,
+                  top: isLegacyRemoved ? '50%' : '75%'
+                }}
+                style={{ transformOrigin: 'left' }}
+                transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+              />
+            )}
+            
+            {/* Particles to Legacy - color matches cutover state, position depends on Elastic deployment */}
+            <AnimatePresence>
+              {isLegacyReceiving && !isLegacyRemoved && particles.slice(-2).map((p, i) => (
                 <motion.div
                   key={`to-legacy-${p.id}`}
-                  className={`absolute w-2 h-2 rounded-full top-[25%] -translate-y-1/2 ${
+                  className={`absolute w-2 h-2 rounded-full -translate-y-1/2 ${
                     cutoverState === 'stopping' ? 'bg-red-500' :
                     cutoverState === 'validating' ? 'bg-yellow-500' :
                     'bg-orange-400'
                   }`}
+                  style={{ top: isElasticDeployed ? '25%' : '50%' }}
                   initial={{ left: -10, opacity: 0 }}
                   animate={{ left: '110%', opacity: [0, 1, 1, 0] }}
                   transition={{ duration: 1.8, delay: i * 0.5 }}
@@ -380,12 +456,13 @@ function ZeroDowntimeDemo({ isDark }) {
               ))}
             </AnimatePresence>
             
-            {/* Particles to Elastic - SLOWER */}
+            {/* Particles to Elastic - only when deployed */}
             <AnimatePresence>
-              {particles.slice(-2).map((p, i) => (
+              {isElasticDeployed && particles.slice(-2).map((p, i) => (
                 <motion.div
                   key={`to-elastic-${p.id}`}
-                  className="absolute w-2.5 h-2.5 rounded-full bg-elastic-teal top-[75%] -translate-y-1/2 shadow-sm shadow-elastic-teal/50"
+                  className={`absolute w-2.5 h-2.5 rounded-full bg-elastic-teal -translate-y-1/2 shadow-sm shadow-elastic-teal/50`}
+                  style={{ top: isLegacyRemoved ? '50%' : '75%' }}
                   initial={{ left: -10, opacity: 0 }}
                   animate={{ left: '110%', opacity: [0, 1, 1, 0] }}
                   transition={{ duration: 2, delay: i * 0.4 }}
@@ -395,153 +472,174 @@ function ZeroDowntimeDemo({ isDark }) {
           </div>
 
           {/* Legacy Environment */}
-          <motion.div
-            className="ml-[5.5rem] flex-1"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: isComplete ? 0.5 : 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.3 }}
-          >
-            <div className={`relative h-full px-4 py-3 rounded-xl border-2 transition-all duration-700 ease-in-out flex items-center justify-center ${
-              isComplete ? 'border-gray-500/30 bg-gray-500/10' : 
-              cutoverState === 'stopping' ? 'border-red-500 bg-red-500/20' :
-              cutoverState === 'validating' ? 'border-yellow-500/70 bg-yellow-500/10' :
-              isCutting ? 'border-orange-500/70 bg-orange-500/15' :
-              'border-orange-500/50 bg-orange-500/10'
-            }`}>
-              {/* Status overlay */}
-              <AnimatePresence mode="wait">
-                {(cutoverState === 'stopping' || cutoverState === 'validating' || isComplete) && (
-                  <motion.div
-                    className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                  >
-                    <motion.div 
-                      className={`px-3 py-1.5 rounded font-bold text-xs transition-colors duration-500 ${
-                        isComplete ? 'bg-gray-600 text-white' : 
-                        cutoverState === 'stopping' ? 'bg-red-500 text-white' :
-                        'bg-yellow-500 text-black'
-                      }`}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
-                    >
-                      {isComplete && 'DISCONNECTED'}
-                      {cutoverState === 'stopping' && '🛑 STOPPING WRITES'}
-                      {cutoverState === 'validating' && '✓ WRITES STOPPED'}
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              
-              <div className={`flex items-center gap-3 ${(cutoverState === 'stopping' || cutoverState === 'validating' || isComplete) ? 'opacity-30' : ''}`}>
-                <FontAwesomeIcon icon={faDatabase} className={`text-lg ${isComplete ? 'text-gray-500' : 'text-orange-500'}`} />
-                <div>
-                  <div className={`font-bold text-sm ${isComplete ? 'text-gray-500' : 'text-orange-500'}`}>Legacy Environment</div>
-                  <div className={`text-xs ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}>
-                    {isComplete ? 'Deprecated' : isLegacyReceiving ? 'Receiving data' : 'Stopping...'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Elastic Environment - NO SCALE ANIMATION */}
-          <motion.div
-            className="ml-[5.5rem] flex-1"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.3 }}
-          >
-            <div className={`h-full px-4 py-3 rounded-xl border-2 transition-all duration-700 ease-in-out flex flex-col items-center justify-center gap-2 ${
-              isComplete ? 'border-elastic-teal bg-elastic-teal/20 shadow-md shadow-elastic-teal/10' :
-              cutoverState === 'validating' ? 'border-elastic-teal bg-elastic-teal/15' :
-              'border-elastic-teal/50 bg-elastic-teal/10'
-            }`}>
-              <div className="flex items-center gap-2">
-                <img 
-                  src="/logo-elastic-glyph-color.png" 
-                  alt="Elastic" 
-                  className="w-12 h-12 object-contain"
-                />
-                <div>
-                  <div className="text-elastic-teal font-bold text-sm">Elastic</div>
-                  <div className={`text-xs ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
-                    {isComplete ? 'All traffic' : 'Receiving data'}
-                  </div>
-                </div>
-              </div>
-              {/* Status badges - below content */}
-              {cutoverState === 'validating' && (
-                <motion.div
-                  className="flex items-center gap-1 text-yellow-400 text-xs bg-yellow-500/20 px-2 py-1 rounded"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: [1, 0.7, 1], scale: 1 }}
-                  transition={{ opacity: { duration: 0.8, repeat: Infinity } }}
-                >
-                  <FontAwesomeIcon icon={faCheckCircle} />
-                  <span>Validating...</span>
-                </motion.div>
-              )}
-              {isComplete && (
-                <motion.div
-                  className="flex items-center gap-1 text-elastic-teal text-xs bg-elastic-teal/20 px-2 py-1 rounded"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <FontAwesomeIcon icon={faCheckCircle} />
-                  <span>Cutover Complete</span>
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-          </div>
-
-          {/* Success Message - Right of Environments */}
           <AnimatePresence>
-            {isComplete && (
+            {!isLegacyRemoved && (
               <motion.div
-                className="flex-shrink-0 p-4 rounded-xl bg-elastic-teal/20 border border-elastic-teal/40 self-stretch flex flex-col justify-center"
-                style={{ minWidth: '200px' }}
+                className="ml-[5.5rem] flex-1"
                 initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
+                animate={{ opacity: isComplete ? 0.5 : 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.8, x: 50 }}
+                transition={{ delay: 0.4, duration: 0.3 }}
               >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-elastic-teal/30 flex items-center justify-center">
-                    <FontAwesomeIcon icon={faCheckCircle} className="text-2xl text-elastic-teal" />
-                  </div>
-                  <div>
-                    <div className={`font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-                      Zero Downtime
+                <div className={`relative h-full px-4 py-3 rounded-xl border-2 transition-all duration-700 ease-in-out flex items-center justify-center ${
+                  isComplete ? 'border-gray-500/30 bg-gray-500/10' : 
+                  cutoverState === 'stopping' ? 'border-red-500 bg-red-500/20' :
+                  cutoverState === 'validating' ? 'border-yellow-500/70 bg-yellow-500/10' :
+                  isCutting ? 'border-orange-500/70 bg-orange-500/15' :
+                  'border-orange-500/50 bg-orange-500/10'
+                }`}>
+                  {/* Status overlay */}
+                  <AnimatePresence mode="wait">
+                    {(cutoverState === 'stopping' || cutoverState === 'validating' || isComplete) && (
+                      <motion.div
+                        className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      >
+                        <motion.div 
+                          className={`px-3 py-1.5 rounded font-bold text-xs transition-colors duration-500 ${
+                            isComplete ? 'bg-gray-600 text-white' : 
+                            cutoverState === 'stopping' ? 'bg-red-500 text-white' :
+                            'bg-yellow-500 text-black'
+                          }`}
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.3, ease: "easeOut" }}
+                        >
+                          {isComplete && 'DISCONNECTED'}
+                          {cutoverState === 'stopping' && '🛑 STOPPING WRITES'}
+                          {cutoverState === 'validating' && '✓ WRITES STOPPED'}
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  
+                  <div className={`flex items-center gap-3 ${(cutoverState === 'stopping' || cutoverState === 'validating' || isComplete) ? 'opacity-30' : ''}`}>
+                    <FontAwesomeIcon icon={faDatabase} className={`text-lg ${isComplete ? 'text-gray-500' : 'text-orange-500'}`} />
+                    <div>
+                      <div className={`font-bold text-sm ${isComplete ? 'text-gray-500' : 'text-orange-500'}`}>Legacy Environment</div>
+                      <div className={`text-xs ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}>
+                        {isComplete ? 'Deprecated' : isLegacyReceiving ? 'Receiving data' : 'Stopping...'}
+                      </div>
                     </div>
-                    <div className={`font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
-                      Zero Data Loss
-                    </div>
-                  </div>
-                  <div className="text-elastic-teal text-sm font-bold">
-                    100% Success
                   </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Elastic Environment - Only shows after Deploy button is clicked */}
+          <AnimatePresence>
+            {isElasticDeployed && (
+              <motion.div
+                className="ml-[5.5rem] flex-1"
+                initial={{ opacity: 0, scale: 0.9, height: 0 }}
+                animate={{ opacity: 1, scale: 1, height: 'auto' }}
+                exit={{ opacity: 0, scale: 0.9, height: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+              >
+                <div className={`h-full px-4 py-3 rounded-xl border-2 transition-all duration-700 ease-in-out flex flex-col items-center justify-center gap-2 ${
+                  isComplete ? 'border-elastic-teal bg-elastic-teal/20 shadow-md shadow-elastic-teal/10' :
+                  cutoverState === 'validating' ? 'border-elastic-teal bg-elastic-teal/15' :
+                  isDark ? 'border-elastic-teal/50 bg-elastic-teal/10' : 'border-elastic-blue/50 bg-elastic-blue/10'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <img 
+                      src="/logo-elastic-glyph-color.png" 
+                      alt="Elastic" 
+                      className="w-12 h-12 object-contain"
+                    />
+                    <div>
+                      <div className={`font-bold text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>Elastic</div>
+                      <div className={`text-xs ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
+                        {isComplete ? 'All traffic' : 'Receiving data'}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Status badges - below content */}
+                  {cutoverState === 'validating' && (
+                    <motion.div
+                      className="flex items-center gap-1 text-yellow-400 text-xs bg-yellow-500/20 px-2 py-1 rounded"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: [1, 0.7, 1], scale: 1 }}
+                      transition={{ opacity: { duration: 0.8, repeat: Infinity } }}
+                    >
+                      <FontAwesomeIcon icon={faCheckCircle} />
+                      <span>Validating...</span>
+                    </motion.div>
+                  )}
+                  {isComplete && (
+                    <motion.div
+                      className={`flex items-center gap-1 text-xs px-2 py-1 rounded ${isDark ? 'text-elastic-teal bg-elastic-teal/20' : 'text-elastic-blue bg-elastic-blue/20'}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FontAwesomeIcon icon={faCheckCircle} />
+                      <span>Cutover Complete</span>
+                    </motion.div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          </div>
         </div>
       </div>
 
-      {/* Bottom Controls */}
-      <div className="grid grid-cols-4 gap-4">
+      {/* Success Message - Below main architecture, horizontal */}
+      <AnimatePresence>
+        {isComplete && (
+          <motion.div
+            className={`py-1 px-4 rounded-xl border flex items-center justify-center gap-8 ${
+              isDark 
+                ? 'bg-elastic-teal/20 border-elastic-teal/40' 
+                : 'bg-elastic-blue/10 border-elastic-blue/30'
+            }`}
+            initial={{ opacity: 0, y: 20, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: 20, height: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDark ? 'bg-elastic-teal/30' : 'bg-elastic-blue/20'}`}>
+              <FontAwesomeIcon icon={faCheckCircle} className={`text-xl ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
+            </div>
+            <div className={`font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+              Zero Downtime
+            </div>
+            <div className={`w-1 h-6 rounded ${isDark ? 'bg-white/20' : 'bg-elastic-dev-blue/20'}`} />
+            <div className={`font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+              Zero Data Loss
+            </div>
+            <div className={`w-1 h-6 rounded ${isDark ? 'bg-white/20' : 'bg-elastic-dev-blue/20'}`} />
+            <div className={`text-sm font-bold ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
+              100% Success
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      </motion.div>
+
+      {/* Bottom Controls - Outside main container */}
+      <motion.div 
+        className={`grid grid-cols-4 gap-4 rounded-2xl border p-4 mx-auto ${isDark ? 'bg-white/[0.02] border-white/10' : 'bg-white/80 border-elastic-dev-blue/10'}`}
+        style={{ width: '1100px', maxWidth: '100%' }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
         {/* Cutover Button */}
         <button
           type="button"
           onClick={() => isComplete ? handleReset() : handleCutover()}
-          disabled={isCutting}
+          disabled={isCutting || !isElasticDeployed}
           className={`col-span-1 p-4 rounded-xl font-bold text-center transition-all cursor-pointer ${
             isComplete 
-              ? 'bg-white/10 hover:bg-white/20 text-white' 
+              ? isDark ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-elastic-dev-blue/10 hover:bg-elastic-dev-blue/20 text-elastic-dev-blue'
+              : !isElasticDeployed
+              ? isDark ? 'bg-white/5 text-white/30 cursor-not-allowed' : 'bg-elastic-dev-blue/5 text-elastic-dev-blue/30 cursor-not-allowed'
               : isCutting
               ? 'bg-gradient-to-r from-orange-500/30 to-red-500/30 text-orange-300 cursor-wait'
               : 'bg-gradient-to-r from-elastic-pink to-elastic-blue text-white hover:shadow-lg hover:shadow-elastic-pink/30 hover:scale-[1.02] active:scale-[0.98]'
@@ -549,6 +647,8 @@ function ZeroDowntimeDemo({ isDark }) {
         >
           {isComplete ? (
             'Reset Demo'
+          ) : !isElasticDeployed ? (
+            <span className="text-sm">Deploy Elastic First</span>
           ) : cutoverState === 'preparing' ? (
             <span className="animate-pulse">Preparing...</span>
           ) : cutoverState === 'stopping' ? (
@@ -581,7 +681,7 @@ function ZeroDowntimeDemo({ isDark }) {
             transition={{ delay: 0.6 + index * 0.1 }}
           >
             <div className="flex items-center gap-3">
-              <FontAwesomeIcon icon={point.icon} className={`text-lg ${point.active ? 'text-elastic-teal' : 'text-gray-500'}`} />
+              <FontAwesomeIcon icon={point.icon} className={`text-lg ${point.active ? isDark ? 'text-elastic-teal' : 'text-elastic-blue' : 'text-gray-500'}`} />
               <div>
                 <div className={`text-sm font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>{point.title}</div>
                 <div className={`text-xs ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}>{point.desc}</div>
@@ -589,8 +689,30 @@ function ZeroDowntimeDemo({ isDark }) {
             </div>
           </motion.div>
         ))}
-      </div>
-    </motion.div>
+      </motion.div>
+
+      {/* Remove Legacy System Button - Fixed position next to settings */}
+      <AnimatePresence>
+        {isComplete && !isLegacyRemoved && (
+          <motion.button
+            onClick={() => setIsLegacyRemoved(true)}
+            className={`fixed bottom-4 right-14 z-40 w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-lg ${
+              isDark
+                ? 'bg-white/10 hover:bg-red-500/20 text-white/50 hover:text-red-400'
+                : 'bg-elastic-dev-blue/10 hover:bg-red-500/10 text-elastic-dev-blue/50 hover:text-red-500'
+            }`}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            title="Decommission Legacy System"
+          >
+            <FontAwesomeIcon icon={faTrashCan} className="text-sm" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
@@ -641,10 +763,10 @@ function ServicesScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Your Path to Success
           </span>
-          <h2 className={`text-3xl md:text-4xl font-bold mt-2 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-3xl md:text-4xl font-extrabold mt-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             <span className="gradient-text">Transform Faster</span> with Expert Guidance
           </h2>
           
@@ -774,20 +896,20 @@ function ServicesScene() {
                 </div>
 
                 {/* Elastic Services Side */}
-                <div className={`flex-1 rounded-2xl border-2 border-elastic-teal/30 overflow-hidden ${isDark ? 'bg-elastic-teal/5' : 'bg-elastic-teal/10'}`}>
-                  <div className="p-4 border-b border-elastic-teal/20 bg-elastic-teal/10">
+                <div className={`flex-1 rounded-2xl border-2 overflow-hidden ${isDark ? 'border-elastic-teal/30 bg-elastic-teal/5' : 'border-elastic-blue/30 bg-elastic-blue/5'}`}>
+                  <div className={`p-4 border-b ${isDark ? 'border-elastic-teal/20 bg-elastic-teal/10' : 'border-elastic-blue/20 bg-elastic-blue/10'}`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-elastic-teal/20 flex items-center justify-center">
-                          <FontAwesomeIcon icon={faRocket} className="text-elastic-teal" />
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDark ? 'bg-elastic-teal/20' : 'bg-elastic-blue/20'}`}>
+                          <FontAwesomeIcon icon={faRocket} className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'} />
                         </div>
                         <div>
                           <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>With Elastic Services</h3>
-                          <p className="text-sm text-elastic-teal">Expert-led transformation</p>
+                          <p className={`text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>Expert-led transformation</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-3xl font-black text-elastic-teal">4-7</div>
+                        <div className={`text-3xl font-black ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>4-7</div>
                         <div className={`text-xs ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>months</div>
                       </div>
                     </div>
@@ -802,30 +924,30 @@ function ServicesScene() {
                         transition={{ delay: index * 0.1 }}
                         className={`p-3 rounded-xl flex items-start gap-3 ${isDark ? 'bg-white/[0.03]' : 'bg-white/60'}`}
                       >
-                        <div className="w-10 h-10 rounded-lg bg-elastic-teal/20 flex items-center justify-center flex-shrink-0">
-                          <FontAwesomeIcon icon={benefit.icon} className="text-elastic-teal" />
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isDark ? 'bg-elastic-teal/20' : 'bg-elastic-blue/20'}`}>
+                          <FontAwesomeIcon icon={benefit.icon} className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className={`font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>{benefit.title}</span>
-                            <span className="text-xs text-elastic-teal">{benefit.subtitle}</span>
+                            <span className={`text-xs ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>{benefit.subtitle}</span>
                           </div>
                           <p className={`text-sm ${isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}`}>{benefit.desc}</p>
                         </div>
-                        <FontAwesomeIcon icon={faCheck} className="text-elastic-teal mt-1" />
+                        <FontAwesomeIcon icon={faCheck} className={`mt-1 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
                       </motion.div>
                     ))}
                   </div>
                   
                   {/* Success Indicator */}
-                  <div className="p-4 border-t border-elastic-teal/20">
+                  <div className={`p-4 border-t ${isDark ? 'border-elastic-teal/20' : 'border-elastic-blue/20'}`}>
                     <div className="flex items-center justify-between mb-2">
                       <span className={`text-sm ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>Success Rate</span>
-                      <span className="text-sm font-bold text-elastic-teal">98%</span>
+                      <span className={`text-sm font-bold ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>98%</span>
                     </div>
-                    <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                    <div className={`h-2 rounded-full overflow-hidden ${isDark ? 'bg-white/10' : 'bg-elastic-dev-blue/10'}`}>
                       <motion.div 
-                        className="h-full bg-gradient-to-r from-elastic-teal to-elastic-blue"
+                        className={`h-full ${isDark ? 'bg-gradient-to-r from-elastic-teal to-elastic-blue' : 'bg-gradient-to-r from-elastic-dev-blue to-elastic-blue'}`}
                         initial={{ width: 0 }}
                         animate={{ width: '98%' }}
                         transition={{ duration: 1, delay: 0.5 }}
@@ -1007,7 +1129,7 @@ function ServicesScene() {
                   <div className="relative">
                     <div className={`absolute top-5 left-0 right-0 h-1 rounded-full ${isDark ? 'bg-white/10' : 'bg-elastic-dev-blue/10'}`} />
                     <motion.div
-                      className="absolute top-5 left-0 h-1 rounded-full bg-gradient-to-r from-elastic-teal via-elastic-pink to-elastic-blue"
+                      className={`absolute top-5 left-0 h-1 rounded-full ${isDark ? 'bg-gradient-to-r from-elastic-teal via-elastic-pink to-elastic-blue' : 'bg-gradient-to-r from-elastic-dev-blue via-elastic-blue to-elastic-blue'}`}
                       animate={{ width: `${(activePhase / (journeyPhases.length - 1)) * 100}%` }}
                       transition={{ duration: 0.5 }}
                     />

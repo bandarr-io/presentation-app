@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons'
 import { useTheme } from './context/ThemeContext'
 import HeroScene from './scenes/HeroScene'
 import AgendaScene from './scenes/AgendaScene'
@@ -12,11 +14,12 @@ import UnifiedStrategyScene from './scenes/UnifiedStrategyScene'
 import CrossClusterScene from './scenes/CrossClusterScene'
 import LicensingScene from './scenes/LicensingScene'
 import SchemaScene from './scenes/SchemaScene'
-import AccessControlScene from './scenes/AccessControlScene'
+import AccessControlScene from './scenes/AccessControlSceneDev'
 import ESQLScene from './scenes/ESQLScene'
 import ConsolidationScene from './scenes/ConsolidationScene'
 import DataTieringScene from './scenes/DataTieringScene'
 import ServicesScene from './scenes/ServicesScene'
+import DataMeshScene from './scenes/DataMeshScene'
 import TeamScene from './scenes/TeamScene'
 import NextStepsScene from './scenes/NextStepsScene'
 import Navigation from './components/Navigation'
@@ -34,15 +37,16 @@ const scenes = [
   { id: 'business-value', component: BusinessValueScene, title: 'Desired Outcomes', description: 'What success looks like', duration: '10 min' },
   { id: 'challenges', component: ChallengesScene, title: 'Problem Patterns', description: 'Common challenges we solve', duration: '10 min' },
   { id: 'data-explosion', component: DataExplosionScene, title: 'The Data Challenge', description: 'Understanding the landscape', duration: '3 min' },
-  { id: 'platform', component: PlatformScene, title: 'The Platform', description: 'Our solutions and capabilities', duration: '5 min' },
   { id: 'unified-strategy', component: UnifiedStrategyScene, title: 'Unified Strategy', description: 'Bringing it all together', duration: '5 min' },
+  { id: 'platform', component: PlatformScene, title: 'Capabilities', description: 'Our solutions and capabilities', duration: '5 min' },
   { id: 'cross-cluster', component: CrossClusterScene, title: 'Cross-Cluster Search', description: 'Distributed search at global scale', duration: '3 min', hideFromAgenda: true },
-  { id: 'licensing', component: LicensingScene, title: 'Licensing', description: 'One license, full power', duration: '3 min', hideFromAgenda: true },
+  { id: 'data-mesh', component: DataMeshScene, title: 'Data Mesh', description: 'Distributed data architecture', duration: '5 min', hideFromAgenda: true },
   { id: 'schema', component: SchemaScene, title: 'Elastic Common Schema', description: 'Schema on write advantage', duration: '5 min', hideFromAgenda: true },
-  { id: 'access-control', component: AccessControlScene, title: 'Access Controls', description: 'RBAC & ABAC security', duration: '3 min', hideFromAgenda: true },
-  // { id: 'esql', component: ESQLScene, title: 'ES|QL', description: 'Piped query language', duration: '3 min', hideFromAgenda: true },
-  { id: 'consolidation', component: ConsolidationScene, title: 'Consolidation', description: 'Reduce tool sprawl', duration: '3 min', hideFromAgenda: true },
+  { id: 'access-control', component: AccessControlScene, title: 'Access Controls', description: 'Live data masking demo', duration: '3 min', hideFromAgenda: true },
+  { id: 'esql', component: ESQLScene, title: 'ES|QL', description: 'Piped query language', duration: '3 min', hideFromAgenda: true },
   { id: 'data-tiering', component: DataTieringScene, title: 'Data Tiering', description: 'Optimize spend with ILM', duration: '3 min', hideFromAgenda: true },
+  { id: 'licensing', component: LicensingScene, title: 'Licensing', description: 'One license, full power', duration: '3 min', hideFromAgenda: true },
+  { id: 'consolidation', component: ConsolidationScene, title: 'Consolidation', description: 'Reduce tool sprawl', duration: '3 min', hideFromAgenda: true },
   { id: 'services', component: ServicesScene, title: 'Services & Support', description: 'Expert guidance at every stage', duration: '5 min', hideFromAgenda: true },
   { id: 'next-steps', component: NextStepsScene, title: 'Next Steps', description: 'Your path forward'}, //, duration: '2 min' },
 ]
@@ -51,7 +55,7 @@ const scenes = [
 const allScenes = scenes
 
 function App() {
-  const { theme } = useTheme()
+  const { theme, toggleTheme } = useTheme()
   const [currentScene, setCurrentScene] = useState(0)
   const [direction, setDirection] = useState(0)
   const [isReady, setIsReady] = useState(false)
@@ -182,6 +186,19 @@ function App() {
         onPrev={prevScene}
       />
 
+      {/* Theme Toggle Button */}
+      <button
+        onClick={toggleTheme}
+        className={`fixed bottom-4 left-4 z-40 w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-lg ${
+          theme === 'dark' 
+            ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white' 
+            : 'bg-elastic-dev-blue/10 hover:bg-elastic-dev-blue/20 text-elastic-dev-blue/70 hover:text-elastic-dev-blue'
+        }`}
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} className="text-sm" />
+      </button>
+
       {/* Scene Settings */}
       <SceneSettings 
         scenes={allScenes}
@@ -210,7 +227,7 @@ function App() {
             }}
             className="absolute inset-0 overflow-y-auto"
           >
-            <CurrentSceneComponent onNext={nextScene} scenes={activeScenes} />
+            <CurrentSceneComponent onNext={nextScene} scenes={activeScenes} allScenes={orderedScenes} onNavigate={navigateToScene} />
           </motion.div>
         </AnimatePresence>
       )}

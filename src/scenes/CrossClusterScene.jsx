@@ -5,10 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faServer, faMagnifyingGlass, faCloud, faBuilding, faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
 
 const remoteClusters = [
-  { id: 'onprem', name: 'On-Prem Data Centers', type: 'onprem', color: '#48EFCF' },
-  { id: 'aws', name: 'AWS', type: 'cloud', color: '#FF9900' },
-  { id: 'gcp', name: 'Google Cloud Platform', type: 'cloud', color: '#F04E98' },
-  { id: 'azure', name: 'Azure', type: 'cloud', color: '#0078D4' },
+  { id: 'onprem', name: 'On-Prem Data Centers', type: 'onprem', color: '#48EFCF', lightColor: '#0B64DD' },
+  { id: 'aws', name: 'AWS', type: 'cloud', color: '#FF9900', lightColor: '#0B64DD' },
+  { id: 'gcp', name: 'Google Cloud Platform', type: 'cloud', color: '#F04E98', lightColor: '#0B64DD' },
+  { id: 'azure', name: 'Azure', type: 'cloud', color: '#0078D4', lightColor: '#0B64DD' },
 ]
 
 const benefits = [
@@ -69,13 +69,13 @@ function CrossClusterScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest">
+          <span className={`text-eyebrow text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Distributed Architecture
           </span>
-          <h2 className={`text-4xl md:text-5xl font-bold mt-2 ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-4xl md:text-5xl font-extrabold mt-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             Distributed by Design — <span className="gradient-text">Connected by Elastic</span>
           </h2>
-          <p className={`text-lg mt-2 ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
+          <p className={`text-paragraph text-lg mt-2 ${isDark ? 'text-elastic-light-grey' : 'text-elastic-ink'}`}>
             Elastic powers distributed data access with secure, low-latency cross-cluster operations
           </p>
         </motion.div>
@@ -90,11 +90,16 @@ function CrossClusterScene() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              {benefits.map((benefit, index) => (
+              {benefits.map((benefit, index) => {
+                const cluster = remoteClusters[index]
+                const accentColor = cluster 
+                  ? (isDark ? cluster.color : cluster.lightColor) 
+                  : (isDark ? '#FEC514' : '#0B64DD')
+                return (
                 <motion.div
                   key={index}
                   className={`p-4 rounded-xl border-l-4 ${isDark ? 'bg-white/[0.03]' : 'bg-white/60'}`}
-                  style={{ borderLeftColor: remoteClusters[index]?.color || '#FEC514' }}
+                  style={{ borderLeftColor: accentColor }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
@@ -104,12 +109,13 @@ function CrossClusterScene() {
                   </div>
                   <div 
                     className="text-lg font-bold"
-                    style={{ color: remoteClusters[index]?.color || '#FEC514' }}
+                    style={{ color: accentColor }}
                   >
                     {benefit.highlight}
                   </div>
                 </motion.div>
-              ))}
+              )})}
+            
             </motion.div>
 
           {/* Main visualization */}
@@ -137,8 +143,12 @@ function CrossClusterScene() {
                       isDark ? 'bg-elastic-dev-blue' : 'bg-white'
                     }`}
                     style={{ 
-                      borderColor: queryPhase === 'complete' ? '#48EFCF' : (isDark ? 'rgba(72,239,207,0.5)' : 'rgba(72,239,207,0.8)'),
-                      boxShadow: queryPhase === 'complete' ? '0 0 30px rgba(72,239,207,0.5)' : 'none'
+                      borderColor: queryPhase === 'complete' 
+                        ? (isDark ? '#48EFCF' : '#0B64DD') 
+                        : (isDark ? 'rgba(72,239,207,0.5)' : 'rgba(11,100,221,0.5)'),
+                      boxShadow: queryPhase === 'complete' 
+                        ? (isDark ? '0 0 30px rgba(72,239,207,0.5)' : '0 0 30px rgba(11,100,221,0.3)') 
+                        : 'none'
                     }}
                   >
                     <div className="flex items-center">
@@ -191,7 +201,7 @@ function CrossClusterScene() {
                         <motion.path
                           d={`M ${startX} 0 C ${startX} ${controlY}, ${controlX} ${controlY}, ${endX} 100`}
                           fill="none"
-                          stroke="#48EFCF"
+                          stroke={isDark ? '#48EFCF' : '#0B64DD'}
                           strokeWidth="0.4"
                           strokeOpacity="0.7"
                           initial={{ pathLength: 0 }}
@@ -226,9 +236,9 @@ function CrossClusterScene() {
                   return (
                     <motion.div
                       key={`send-${cluster.id}`}
-                      className="absolute w-4 h-4 rounded-full bg-elastic-teal"
+                      className={`absolute w-4 h-4 rounded-full ${isDark ? 'bg-elastic-teal' : 'bg-elastic-blue'}`}
                       style={{ 
-                        boxShadow: '0 0 12px 4px rgba(72, 239, 207, 0.6)',
+                        boxShadow: isDark ? '0 0 12px 4px rgba(72, 239, 207, 0.6)' : '0 0 12px 4px rgba(11, 100, 221, 0.6)',
                         marginLeft: '-8px',
                         marginTop: '-8px'
                       }}
@@ -454,8 +464,8 @@ function CrossClusterScene() {
               )}
               {queryPhase === 'sending' && (
                 <>
-                  <motion.div className="w-2 h-2 rounded-full bg-elastic-teal" animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 0.5, repeat: Infinity }} />
-                  <span className="text-elastic-teal">Sending query...</span>
+                  <motion.div className={`w-2 h-2 rounded-full ${isDark ? 'bg-elastic-teal' : 'bg-elastic-blue'}`} animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 0.5, repeat: Infinity }} />
+                  <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}>Sending query...</span>
                 </>
               )}
               {queryPhase === 'processing' && (
@@ -471,7 +481,7 @@ function CrossClusterScene() {
                 </>
               )}
               {queryPhase === 'complete' && (
-                <span className="text-elastic-teal">✓ Results from 4 clusters in 42ms</span>
+                <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}>✓ Results from 4 clusters in 42ms</span>
               )}
               {replicationPhase === 'replicating' && (
                 <>
@@ -486,7 +496,7 @@ function CrossClusterScene() {
                 </>
               )}
               {replicationPhase === 'complete' && (
-                <span className="text-elastic-teal">✓ All clusters in sync</span>
+                <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}>✓ All clusters in sync</span>
               )}
             </motion.div>
 
@@ -498,7 +508,7 @@ function CrossClusterScene() {
               transition={{ delay: 0.6 }}
             >
               <motion.button
-                className="px-4 py-2 rounded-full bg-gradient-to-r from-elastic-teal to-elastic-blue text-white text-sm flex items-center gap-2 disabled:opacity-50"
+                className={`px-4 py-2 rounded-full text-white text-sm flex items-center gap-2 disabled:opacity-50 ${isDark ? 'bg-gradient-to-r from-elastic-teal to-elastic-blue' : 'bg-gradient-to-r from-elastic-dev-blue to-elastic-blue'}`}
                 whileHover={{ scale: isAnimating ? 1 : 1.05 }}
                 whileTap={{ scale: isAnimating ? 1 : 0.95 }}
                 onClick={runAnimation}

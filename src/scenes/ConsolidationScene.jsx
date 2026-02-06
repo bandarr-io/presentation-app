@@ -99,10 +99,10 @@ function ConsolidationScene() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span className="text-elastic-teal text-sm font-mono uppercase tracking-widest block mb-2">
+          <span className={`text-eyebrow text-sm block mb-2 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>
             Unified Platform
           </span>
-          <h2 className={`text-3xl md:text-4xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
+          <h2 className={`text-headline text-3xl md:text-4xl font-extrabold ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
             <span className="text-elastic-blue">Consolidate</span> Point Solutions,{' '}
             <span className="text-elastic-pink">Centralize</span> Data Workflows
           </h2>
@@ -214,7 +214,9 @@ function ConsolidationScene() {
               className={`p-4 rounded-2xl font-bold text-lg transition-all ${
                 isConsolidated
                   ? 'bg-elastic-blue text-white hover:bg-elastic-blue/80'
-                  : 'bg-elastic-teal text-elastic-dev-blue hover:bg-elastic-teal/80'
+                  : isDark
+                    ? 'bg-elastic-teal text-elastic-dev-blue hover:bg-elastic-teal/80'
+                    : 'bg-elastic-blue text-white hover:bg-elastic-blue/80'
               }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -428,7 +430,7 @@ function ConsolidationScene() {
                           <div className={`w-full py-1.5 rounded-full text-xs font-medium text-center ${
                             isDark 
                               ? 'bg-elastic-teal/20 text-elastic-teal border border-elastic-teal/30' 
-                              : 'bg-elastic-teal/10 text-elastic-blue border border-elastic-teal/30'
+                              : 'bg-elastic-blue/10 text-elastic-blue border border-elastic-blue/30'
                           }`}>
                             Search AI Lake
                           </div>
@@ -483,12 +485,12 @@ function ConsolidationScene() {
 
                   {/* Integrated tools - right side */}
                   <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-2">
-                    <div className="text-sm font-bold text-elastic-teal mb-2 text-center">Integrated</div>
+                    <div className={`text-sm font-bold mb-2 text-center ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>Integrated</div>
                     {allTools.filter(t => t.type === 'integrate').map((tool, i) => (
                       <motion.div
                         key={tool.name}
-                        className={`px-3 py-2 rounded-xl border-2 border-elastic-teal/30 ${
-                          isDark ? 'bg-elastic-teal/10' : 'bg-elastic-teal/5'
+                        className={`px-3 py-2 rounded-xl border-2 ${
+                          isDark ? 'border-elastic-teal/30 bg-elastic-teal/10' : 'border-elastic-blue/30 bg-elastic-blue/5'
                         }`}
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
