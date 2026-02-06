@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons'
 import { useTheme } from './context/ThemeContext'
+import ErrorBoundary from './components/ErrorBoundary'
 import HeroScene from './scenes/HeroScene'
 import AgendaScene from './scenes/AgendaScene'
 import AboutElasticScene from './scenes/AboutElasticScene'
@@ -58,7 +59,6 @@ const allScenes = scenes
 function App() {
   const { theme, toggleTheme } = useTheme()
   const [currentScene, setCurrentScene] = useState(0)
-  const [direction, setDirection] = useState(0)
   const [isReady, setIsReady] = useState(false)
   
   // Scene filtering and ordering
@@ -88,21 +88,18 @@ function App() {
 
   const navigateToScene = useCallback((index) => {
     if (index >= 0 && index < activeScenes.length) {
-      setDirection(index > currentScene ? 1 : -1)
       setCurrentScene(index)
     }
-  }, [currentScene, activeScenes.length])
+  }, [activeScenes.length])
 
   const nextScene = useCallback(() => {
     if (currentScene < activeScenes.length - 1) {
-      setDirection(1)
       setCurrentScene(prev => prev + 1)
     }
   }, [currentScene, activeScenes.length])
 
   const prevScene = useCallback(() => {
     if (currentScene > 0) {
-      setDirection(-1)
       setCurrentScene(prev => prev - 1)
     }
   }, [currentScene])
@@ -143,21 +140,6 @@ function App() {
   }, [nextScene, prevScene, navigateToScene])
 
   const CurrentSceneComponent = activeScenes[currentScene]?.component || activeScenes[0]?.component
-
-  const variants = {
-    enter: (direction) => ({
-      x: direction > 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction) => ({
-      x: direction > 0 ? '-100%' : '100%',
-      opacity: 0,
-    }),
-  }
 
   return (
     <div className={`relative w-full h-screen overflow-hidden transition-colors duration-300 ${
@@ -230,24 +212,20 @@ function App() {
 
       {/* Scene content */}
       {isReady && (
-        <AnimatePresence mode="wait" custom={direction}>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentScene}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: 'spring', stiffness: 300, damping: 30 },
-              opacity: { duration: 0.3 },
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
             className="absolute inset-0 overflow-y-auto"
           >
-            <CurrentSceneComponent onNext={nextScene} scenes={activeScenes} allScenes={orderedScenes} onNavigate={navigateToScene} />
+            <ErrorBoundary key={`error-${currentScene}`} onRetry={() => setCurrentScene(currentScene)}>
+              <CurrentSceneComponent onNext={nextScene} scenes={activeScenes} allScenes={orderedScenes} onNavigate={navigateToScene} />
+            </ErrorBoundary>
           </motion.div>
         </AnimatePresence>
-        
       )}
       <Analytics />
     </div>
