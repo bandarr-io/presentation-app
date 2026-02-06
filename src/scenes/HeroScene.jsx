@@ -220,8 +220,8 @@ function HeroScene() {
               >
                 <img 
                   src={isDark 
-                    ? "/Elastic Logo+tagline_secondary white.svg" 
-                    : "/Elastic Logo+tagline _ secondary black.png"
+                    ? "/Elastic-Logo-tagline-secondary-white.svg" 
+                    : "/Elastic-Logo-tagline-secondary-black.png"
                   }
                   alt="Elastic - The Search AI Company" 
                   className="h-16 w-auto mx-auto object-contain"
