@@ -68,7 +68,7 @@ function AgendaScene({ scenes = [] }) {
               {/* Left accent bar */}
               <motion.div
                 className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
-                style={{ backgroundColor: item.color }}
+                style={{ backgroundColor: isDark ? item.color : '#0B64DD' }}
                 initial={{ scaleY: 0 }}
                 animate={{ scaleY: hoveredItem === item.id ? 1 : 0.3 }}
                 transition={{ duration: 0.2 }}
@@ -78,7 +78,9 @@ function AgendaScene({ scenes = [] }) {
               <motion.div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                 style={{
-                  background: `radial-gradient(circle at 0% 50%, ${item.color}15, transparent 60%)`,
+                  background: isDark 
+                    ? `radial-gradient(circle at 0% 50%, ${item.color}15, transparent 60%)`
+                    : `radial-gradient(circle at 0% 50%, rgba(11, 100, 221, 0.1), transparent 60%)`,
                 }}
               />
 
@@ -87,8 +89,8 @@ function AgendaScene({ scenes = [] }) {
                 <div 
                   className="w-10 h-10 rounded-full flex items-center justify-center text-sm text-code flex-shrink-0"
                   style={{ 
-                    backgroundColor: `${item.color}20`,
-                    color: item.color,
+                    backgroundColor: isDark ? `${item.color}20` : 'rgba(11, 100, 221, 0.1)',
+                    color: isDark ? item.color : '#0B64DD',
                   }}
                 >
                   {String(item.id).padStart(2, '0')}

@@ -102,7 +102,7 @@ function AboutElasticScene() {
               transition={{ delay: 0.7 + index * 0.1 }}
               whileHover={{ y: -3 }}
             >
-              <div className="text-2xl mb-3" style={{ color: item.color }}>
+              <div className="text-2xl mb-3" style={{ color: isDark ? item.color : '#0B64DD' }}>
                 <FontAwesomeIcon icon={item.icon} />
               </div>
               <h3 className={`text-headline text-lg font-bold mb-2 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>

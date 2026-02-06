@@ -158,14 +158,14 @@ body {
 
 /* Gradient text utility - Bold Minimalism style */
 .gradient-text {
-  background: linear-gradient(135deg, var(--elastic-blue) 0%, var(--elastic-pink) 100%);
+  background: linear-gradient(135deg, var(--elastic-blue) 0%, var(--elastic-dev-blue) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .dark .gradient-text {
-  background: linear-gradient(135deg, var(--elastic-teal) 0%, var(--elastic-blue) 100%);
+  background: linear-gradient(135deg, var(--elastic-blue) 0%, var(--elastic-teal) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

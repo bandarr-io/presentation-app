@@ -61,7 +61,7 @@ function NextStepsScene() {
           
           {/* Progress line */}
           <motion.div
-            className="absolute top-7 left-0 h-0.5 bg-gradient-to-r from-elastic-teal via-elastic-blue to-elastic-pink hidden md:block"
+            className={`absolute top-7 left-0 h-0.5 hidden md:block ${isDark ? 'bg-gradient-to-r from-elastic-teal via-elastic-blue to-elastic-pink' : 'bg-gradient-to-r from-elastic-dev-blue via-elastic-blue to-elastic-blue'}`}
             initial={{ width: 0 }}
             animate={{ width: `${((activeStep + 1) / journeySteps.length) * 100}%` }}
             transition={{ duration: 0.4 }}

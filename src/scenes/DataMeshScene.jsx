@@ -370,7 +370,9 @@ function MeshNode({ x, y, label, color, delay = 0, isCenter = false, isActive = 
       <motion.div
         className={`rounded-full flex items-center justify-center border-2 ${
           isCenter 
-            ? 'bg-gradient-to-br from-elastic-teal/30 to-elastic-blue/30' 
+            ? isDark 
+              ? 'bg-gradient-to-br from-elastic-teal/30 to-elastic-blue/30'
+              : 'bg-gradient-to-br from-elastic-dev-blue/30 to-elastic-blue/30'
             : isDark ? 'bg-white/[0.05]' : 'bg-white/80'
         }`}
         style={{ 
@@ -383,7 +385,7 @@ function MeshNode({ x, y, label, color, delay = 0, isCenter = false, isActive = 
         transition={{ duration: 0.5, repeat: isActive ? Infinity : 0, repeatDelay: 1 }}
       >
         {isCenter ? (
-          <FontAwesomeIcon icon={faMagnifyingGlass} className="text-elastic-teal text-lg" />
+          <FontAwesomeIcon icon={faMagnifyingGlass} className={`text-lg ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
         ) : (
           <FontAwesomeIcon icon={faDatabase} style={{ color }} className="text-sm" />
         )}
@@ -433,14 +435,16 @@ function SearchBar({ text, isTyping, onShowAnswer, searchComplete, showCursor = 
         onClick={onShowAnswer}
         className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
           isTyping 
-            ? 'bg-elastic-teal/20 text-elastic-teal cursor-not-allowed' 
+            ? isDark
+              ? 'bg-elastic-teal/20 text-elastic-teal cursor-not-allowed'
+              : 'bg-elastic-blue/20 text-elastic-blue cursor-not-allowed'
             : searchComplete
               ? isDark 
                 ? 'bg-elastic-teal/30 text-elastic-teal hover:bg-elastic-teal hover:text-white' 
-                : 'bg-elastic-teal/20 text-elastic-teal hover:bg-elastic-teal hover:text-white'
+                : 'bg-elastic-blue/20 text-elastic-blue hover:bg-elastic-blue hover:text-white'
               : isDark 
                 ? 'bg-white/10 text-white/60 hover:bg-elastic-teal hover:text-white' 
-                : 'bg-elastic-dev-blue/10 text-elastic-dev-blue/60 hover:bg-elastic-teal hover:text-white'
+                : 'bg-elastic-dev-blue/10 text-elastic-dev-blue/60 hover:bg-elastic-blue hover:text-white'
         }`}
         whileHover={!isTyping ? { scale: 1.1 } : {}}
         whileTap={!isTyping ? { scale: 0.95 } : {}}
@@ -459,16 +463,9 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
   
   // Navigate to a scene by ID - searches in active scenes
   const navigateToSceneById = useCallback((sceneId) => {
-    console.log('Attempting to navigate to:', sceneId)
-    console.log('Available scenes:', scenes.map(s => s.id))
-    // Find the scene in active scenes (scenes prop)
     const index = scenes.findIndex(s => s.id === sceneId)
-    console.log('Found at index:', index)
     if (index !== -1 && onNavigate) {
-      console.log('Calling onNavigate with index:', index)
       onNavigate(index)
-    } else {
-      console.warn(`Scene "${sceneId}" not found in active scenes. It may be disabled. Available: ${scenes.map(s => s.id).join(', ')}`)
     }
   }, [scenes, onNavigate])
   const [stage, setStage] = useState(0)
@@ -700,7 +697,7 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                           transition={{ delay: 0.3 }}
                         >
                           Data is a <span className="italic">strategic asset</span>. We need to retrieve, connect, and act on it—
-                          <span className="text-elastic-teal font-semibold"> fast</span>.
+                          <span className={`font-semibold ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}> fast</span>.
                         </motion.p>
 
                         <motion.div
@@ -745,20 +742,20 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                   {/* Search Side */}
                   <motion.div
                     className={`flex-1 rounded-2xl border-2 p-4 relative overflow-hidden ${
-                      isDark ? 'bg-elastic-teal/5' : 'bg-elastic-teal/5'
+                      isDark ? 'bg-elastic-teal/5' : 'bg-elastic-blue/5'
                     }`}
-                    style={{ borderColor: '#48EFCF' }}
+                    style={{ borderColor: isDark ? '#48EFCF' : '#0B64DD' }}
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-elastic-teal/20 flex items-center justify-center">
-                        <FontAwesomeIcon icon={faMemory} className="text-elastic-teal text-xl" />
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDark ? 'bg-elastic-teal/20' : 'bg-elastic-blue/20'}`}>
+                        <FontAwesomeIcon icon={faMemory} className={`text-xl ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
                       </div>
                       <div>
                         <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>Search</h3>
-                        <p className="text-elastic-teal text-sm">Like memory</p>
+                        <p className={`text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>Like memory</p>
                       </div>
                     </div>
 
@@ -779,7 +776,7 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                           transition={{ delay: 0.5 + i * 0.1 }}
                         >
                           <div className="flex items-center gap-2">
-                            <FontAwesomeIcon icon={item.icon} className="text-elastic-teal text-sm" />
+                            <FontAwesomeIcon icon={item.icon} className={`text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
                             <span className={`text-sm ${isDark ? 'text-white/80' : 'text-elastic-dev-blue/80'}`}>{item.text}</span>
                           </div>
                           <FontAwesomeIcon 
@@ -1194,7 +1191,7 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                     >
                       <p className={`text-lg ${isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
                         The problem isn't <span className="text-orange-400 font-semibold">where</span> data lives...
-                        It's whether you can <span className="text-elastic-teal font-semibold">search it all at once</span>.
+                        It's whether you can <span className={`font-semibold ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}>search it all at once</span>.
                       </p>
                     </motion.div>
                   )}
@@ -1320,7 +1317,7 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${
                               isDark 
                                 ? 'bg-white/10 text-white/50 hover:bg-elastic-teal/30 hover:text-elastic-teal' 
-                                : 'bg-elastic-dev-blue/10 text-elastic-dev-blue/50 hover:bg-elastic-teal/30 hover:text-elastic-teal'
+                                : 'bg-elastic-dev-blue/10 text-elastic-dev-blue/50 hover:bg-elastic-blue/30 hover:text-elastic-blue'
                             }`}
                           >
                             <FontAwesomeIcon icon={faCircleNodes} className="text-[10px]" />
@@ -1430,7 +1427,7 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                             {/* Search icons above dividers, centered */}
                             <motion.div 
                               className="absolute -translate-x-[0%]" 
-                              style={{ left: '031.33%', top: '0%' }}
+                              style={{ left: '31.33%', top: '0%' }}
                               initial={{ opacity: 0, scale: 0 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ delay: 0.6 }}
@@ -1472,7 +1469,7 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
                               >
-                                <FontAwesomeIcon icon={faArrowUp} className="text-elastic-teal text-lg" />
+                                <FontAwesomeIcon icon={faArrowUp} className={`text-lg ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
                               </motion.div>
                               {/* Data grid below */}
                               <div className="w-24 h-14 relative" style={{ transform: 'perspective(150px) rotateX(35deg)' }}>
@@ -1634,10 +1631,10 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                               navigateToSceneById('cross-cluster')
                             }}
                             className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all hover:scale-105 cursor-pointer ${
-                              isDark ? 'border-elastic-teal/30 bg-elastic-teal/5 hover:border-elastic-teal hover:bg-elastic-teal/10' : 'border-elastic-teal/30 bg-elastic-teal/5 hover:border-elastic-teal hover:bg-elastic-teal/10'
+                              isDark ? 'border-elastic-teal/30 bg-elastic-teal/5 hover:border-elastic-teal hover:bg-elastic-teal/10' : 'border-elastic-blue/30 bg-elastic-blue/5 hover:border-elastic-blue hover:bg-elastic-blue/10'
                             }`}
                           >
-                            <FontAwesomeIcon icon={faGlobe} className="text-elastic-teal text-sm" />
+                            <FontAwesomeIcon icon={faGlobe} className={`text-sm ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
                             <div className="text-left">
                               <span className={`font-medium text-sm ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                                 Cross-Cluster Search
@@ -1680,7 +1677,7 @@ function DataMeshScene({ scenes = [], allScenes = [], onNavigate }) {
                               animate={{ opacity: 1, x: 0 }}
                               exit={{ opacity: 0, x: 20 }}
                             >
-                              <FontAwesomeIcon icon={faBolt} className="mr-2 text-elastic-teal" />
+                              <FontAwesomeIcon icon={faBolt} className={`mr-2 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} />
                               Searching all clusters...
                             </motion.div>
                           )}

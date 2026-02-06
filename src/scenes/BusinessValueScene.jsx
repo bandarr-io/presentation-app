@@ -78,9 +78,9 @@ function BusinessValueScene() {
           >
             Elastic helps organizations in{' '}
             <span className="relative inline-block">
-              <span className="text-elastic-teal">four key areas</span>
+              <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}>four key areas</span>
               <motion.div 
-                className="absolute -bottom-1 left-0 right-0 h-1 bg-elastic-teal/30 rounded-full"
+                className={`absolute -bottom-1 left-0 right-0 h-1 rounded-full ${isDark ? 'bg-elastic-teal/30' : 'bg-elastic-blue/30'}`}
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
@@ -286,7 +286,7 @@ function BusinessValueScene() {
                 </div>
                 <p className={`text-2xl leading-relaxed font-medium ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                   Elastic delivers across all four areas with a{' '}
-                  <span className="text-elastic-teal">unified platform</span>.
+                  <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}>unified platform</span>.
                 </p>
               </motion.div>
             ) : (

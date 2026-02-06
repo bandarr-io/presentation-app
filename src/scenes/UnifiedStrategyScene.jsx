@@ -261,7 +261,7 @@ function UnifiedStrategyScene() {
                     <div className={`w-full py-1.5 rounded-full text-xs font-medium text-center ${
                       isDark 
                         ? 'bg-elastic-teal/20 text-elastic-teal border border-elastic-teal/30' 
-                        : 'bg-elastic-teal/10 text-elastic-blue border border-elastic-teal/30'
+                        : 'bg-elastic-blue/10 text-elastic-blue border border-elastic-blue/30'
                     }`}>
                       Search AI Lake
                     </div>

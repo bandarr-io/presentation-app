@@ -88,14 +88,14 @@ function DataExplosionScene() {
               whileHover={{ scale: 1.01 }}
             >
               <div className={`absolute top-0 right-0 w-48 h-48 rounded-full blur-[80px] transition-colors ${
-                isDark ? 'bg-elastic-teal/10 group-hover:bg-elastic-teal/20' : 'bg-elastic-teal/20 group-hover:bg-elastic-teal/30'
+                isDark ? 'bg-elastic-teal/10 group-hover:bg-elastic-teal/20' : 'bg-elastic-blue/20 group-hover:bg-elastic-blue/30'
               }`} />
               
               <div className="relative flex items-center">
                 <div className="w-1/2">
                   <div className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
                     <AnimatedCounter target="175" /> 
-                    <span className="text-elastic-teal">ZB</span>
+                    <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}>ZB</span>
                   </div>
                   <p className={`text-sm mt-1 ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
                     of data generated in 2025
@@ -109,7 +109,7 @@ function DataExplosionScene() {
                   {[15, 20, 28, 40, 58, 85].map((height, i) => (
                     <motion.div
                       key={i}
-                      className="flex-1 rounded-t-sm bg-gradient-to-t from-elastic-teal/60 to-elastic-teal"
+                      className={`flex-1 rounded-t-sm ${isDark ? 'bg-gradient-to-t from-elastic-teal/60 to-elastic-teal' : 'bg-gradient-to-t from-elastic-blue/60 to-elastic-blue'}`}
                       initial={{ height: 0 }}
                       animate={{ height: `${height}%` }}
                       transition={{ delay: 0.4 + i * 0.1, duration: 0.5, ease: 'easeOut' }}
@@ -122,7 +122,7 @@ function DataExplosionScene() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.2, duration: 0.3 }}
                   >
-                    <svg className="w-6 h-6 text-elastic-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className={`w-6 h-6 ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                     </svg>
                   </motion.div>
@@ -143,7 +143,7 @@ function DataExplosionScene() {
               whileHover={{ scale: 1.01 }}
             >
               <div className={`absolute top-0 right-0 w-48 h-48 rounded-full blur-[80px] transition-colors ${
-                isDark ? 'bg-elastic-pink/10 group-hover:bg-elastic-pink/20' : 'bg-elastic-pink/15 group-hover:bg-elastic-pink/25'
+                isDark ? 'bg-elastic-pink/10 group-hover:bg-elastic-pink/20' : 'bg-elastic-blue/15 group-hover:bg-elastic-blue/25'
               }`} />
               
               <div className="relative flex items-center">
@@ -164,7 +164,7 @@ function DataExplosionScene() {
                     <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                       <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="14"
                         className={isDark ? 'text-white/10' : 'text-elastic-dev-blue/10'} />
-                      <motion.circle cx="50" cy="50" r="42" fill="none" stroke="#F04E98" strokeWidth="14"
+                      <motion.circle cx="50" cy="50" r="42" fill="none" stroke={isDark ? '#F04E98' : '#0B64DD'} strokeWidth="14"
                         strokeDasharray="263.9"
                         initial={{ strokeDashoffset: 263.9 }}
                         animate={{ strokeDashoffset: 26.39 }}
@@ -176,7 +176,7 @@ function DataExplosionScene() {
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded bg-elastic-pink" />
+                      <div className={`w-4 h-4 rounded ${isDark ? 'bg-elastic-pink' : 'bg-elastic-blue'}`} />
                       <span className={isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}>Unstructured</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -201,7 +201,7 @@ function DataExplosionScene() {
               whileHover={{ scale: 1.01 }}
             >
               <div className={`absolute top-0 right-0 w-48 h-48 rounded-full blur-[80px] transition-colors ${
-                isDark ? 'bg-elastic-yellow/10 group-hover:bg-elastic-yellow/20' : 'bg-elastic-yellow/20 group-hover:bg-elastic-yellow/30'
+                isDark ? 'bg-elastic-yellow/10 group-hover:bg-elastic-yellow/20' : 'bg-elastic-blue/15 group-hover:bg-elastic-blue/25'
               }`} />
               
               <div className="relative flex items-center">
@@ -220,12 +220,12 @@ function DataExplosionScene() {
                 <div className="w-1/2 flex flex-col gap-2">
                   <div className={`w-full h-14 rounded-xl overflow-hidden flex ${isDark ? 'bg-white/5' : 'bg-elastic-dev-blue/5'}`}>
                     <motion.div
-                      className="h-full bg-elastic-yellow flex items-center justify-center"
+                      className={`h-full flex items-center justify-center ${isDark ? 'bg-elastic-yellow' : 'bg-elastic-blue'}`}
                       initial={{ width: 0 }}
                       animate={{ width: '68%' }}
                       transition={{ delay: 0.7, duration: 0.8, ease: 'easeOut' }}
                     >
-                      <span className="text-elastic-dev-blue font-bold text-sm">68%</span>
+                      <span className={`font-bold text-sm ${isDark ? 'text-elastic-dev-blue' : 'text-white'}`}>68%</span>
                     </motion.div>
                     <div className={`h-full flex-1 flex items-center justify-center ${isDark ? 'bg-white/15' : 'bg-elastic-dev-blue/15'}`}>
                       <span className={`font-medium text-sm ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>32%</span>
@@ -233,7 +233,7 @@ function DataExplosionScene() {
                   </div>
                   <div className="flex justify-between text-xs">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded bg-elastic-yellow" />
+                      <div className={`w-3 h-3 rounded ${isDark ? 'bg-elastic-yellow' : 'bg-elastic-blue'}`} />
                       <span className={isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}>Unused</span>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -284,7 +284,7 @@ function DataExplosionScene() {
                       {/* Unstructured data portion (top section, pink) */}
                       <motion.div
                         className="w-full"
-                        style={{ backgroundColor: '#F04E98' }}
+                        style={{ backgroundColor: isDark ? '#F04E98' : '#0B64DD' }}
                         initial={{ height: 0 }}
                         animate={{ height: unstructuredHeight }}
                         transition={{ duration: 0.3 }}
@@ -299,7 +299,7 @@ function DataExplosionScene() {
                       />
                     </div>
                     <div className="mt-2 text-center">
-                      <div className={`text-xs font-semibold ${era.active ? 'text-elastic-pink' : isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
+                      <div className={`text-xs font-semibold ${era.active ? (isDark ? 'text-elastic-pink' : 'text-elastic-blue') : isDark ? 'text-white/70' : 'text-elastic-dev-blue/70'}`}>
                         {era.name}
                       </div>
                       <div className={`text-[10px] ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/50'}`}>{era.year}</div>
@@ -312,7 +312,7 @@ function DataExplosionScene() {
             {/* Legend for the split */}
             <div className="flex justify-center gap-4 mt-4">
               <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-sm bg-elastic-pink" />
+                <div className={`w-3 h-3 rounded-sm ${isDark ? 'bg-elastic-pink' : 'bg-elastic-blue'}`} />
                 <span className={`text-xs ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>Unstructured</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -328,7 +328,7 @@ function DataExplosionScene() {
           className={`p-5 rounded-xl border ${
             isDark 
               ? 'bg-elastic-pink/5 border-elastic-pink/20' 
-              : 'bg-elastic-pink/5 border-elastic-pink/15'
+              : 'bg-elastic-blue/5 border-elastic-blue/15'
           }`}
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -337,13 +337,13 @@ function DataExplosionScene() {
           <div className="flex flex-col gap-2 text-center">
             <p className={`text-lg font-medium ${isDark ? 'text-white' : 'text-elastic-dev-blue'}`}>
               The cost of inaction?{' '}
-              <span className="text-elastic-pink font-bold">
+              <span className={`font-bold ${isDark ? 'text-elastic-pink' : 'text-elastic-blue'}`}>
                 Most data goes unsearched, unanalyzed, unutilized.
               </span>
             </p>
             <p className={`text-base ${isDark ? 'text-white/60' : 'text-elastic-dev-blue/60'}`}>
               Speed. Scale. Flexibility. Innovation demands all three—
-              <span className={isDark ? 'text-elastic-teal' : 'text-elastic-blue'}> simultaneously</span>.
+              <span className={`font-bold ${isDark ? 'text-elastic-teal' : 'text-elastic-blue'}`}> simultaneously</span>.
             </p>
           </div>
         </motion.div>

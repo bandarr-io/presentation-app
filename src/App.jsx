@@ -14,7 +14,7 @@ import UnifiedStrategyScene from './scenes/UnifiedStrategyScene'
 import CrossClusterScene from './scenes/CrossClusterScene'
 import LicensingScene from './scenes/LicensingScene'
 import SchemaScene from './scenes/SchemaScene'
-import AccessControlScene from './scenes/AccessControlScene'
+import AccessControlScene from './scenes/AccessControlSceneDev'
 import ESQLScene from './scenes/ESQLScene'
 import ConsolidationScene from './scenes/ConsolidationScene'
 import DataTieringScene from './scenes/DataTieringScene'
@@ -42,7 +42,7 @@ const scenes = [
   { id: 'cross-cluster', component: CrossClusterScene, title: 'Cross-Cluster Search', description: 'Distributed search at global scale', duration: '3 min', hideFromAgenda: true },
   { id: 'data-mesh', component: DataMeshScene, title: 'Data Mesh', description: 'Distributed data architecture', duration: '5 min', hideFromAgenda: true },
   { id: 'schema', component: SchemaScene, title: 'Elastic Common Schema', description: 'Schema on write advantage', duration: '5 min', hideFromAgenda: true },
-  { id: 'access-control', component: AccessControlScene, title: 'Access Controls', description: 'RBAC & ABAC security', duration: '3 min', hideFromAgenda: true },
+  { id: 'access-control', component: AccessControlScene, title: 'Access Controls', description: 'Live data masking demo', duration: '3 min', hideFromAgenda: true },
   { id: 'esql', component: ESQLScene, title: 'ES|QL', description: 'Piped query language', duration: '3 min', hideFromAgenda: true },
   { id: 'data-tiering', component: DataTieringScene, title: 'Data Tiering', description: 'Optimize spend with ILM', duration: '3 min', hideFromAgenda: true },
   { id: 'licensing', component: LicensingScene, title: 'Licensing', description: 'One license, full power', duration: '3 min', hideFromAgenda: true },

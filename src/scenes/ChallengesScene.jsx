@@ -150,7 +150,9 @@ function ChallengesScene() {
                 <motion.div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{
-                    background: `radial-gradient(circle at 50% 50%, ${activeCategory.color}15, transparent 70%)`,
+                    background: isDark 
+                      ? `radial-gradient(circle at 50% 50%, ${activeCategory.color}15, transparent 70%)`
+                      : `radial-gradient(circle at 50% 50%, rgba(11, 100, 221, 0.1), transparent 70%)`,
                   }}
                 />
 
@@ -158,8 +160,8 @@ function ChallengesScene() {
                 <div
                   className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center text-base font-mono"
                   style={{ 
-                    backgroundColor: `${activeCategory.color}20`,
-                    color: activeCategory.color,
+                    backgroundColor: isDark ? `${activeCategory.color}20` : 'rgba(11, 100, 221, 0.1)',
+                    color: isDark ? activeCategory.color : '#0B64DD',
                   }}
                 >
                   {String(index + 1).padStart(2, '0')}

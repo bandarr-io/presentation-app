@@ -102,14 +102,16 @@ function TeamScene() {
                 className={`relative p-6 rounded-3xl border overflow-hidden ${
                   isDark ? 'bg-white/[0.03] border-white/10' : 'bg-white/80 border-elastic-dev-blue/10'
                 }`}
-                whileHover={{ scale: 1.02, borderColor: member.color }}
+                whileHover={{ scale: 1.02, borderColor: isDark ? member.color : '#0B64DD' }}
                 transition={{ duration: 0.2 }}
               >
                 {/* Background glow */}
                 <motion.div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{
-                    background: `radial-gradient(circle at 30% 30%, ${member.color}15, transparent 60%)`,
+                    background: isDark 
+                      ? `radial-gradient(circle at 30% 30%, ${member.color}15, transparent 60%)`
+                      : `radial-gradient(circle at 30% 30%, rgba(11, 100, 221, 0.1), transparent 60%)`,
                   }}
                 />
 
@@ -126,15 +128,15 @@ function TeamScene() {
                         src={member.photo}
                         alt={member.name}
                         className="w-20 h-20 rounded-2xl object-cover"
-                        style={{ border: `2px solid ${member.color}` }}
+                        style={{ border: `2px solid ${isDark ? member.color : '#0B64DD'}` }}
                         onError={() => handleImageError(member.id)}
                       />
                     ) : (
                       <div
                         className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-bold"
                         style={{ 
-                          backgroundColor: `${member.color}20`,
-                          color: member.color,
+                          backgroundColor: isDark ? `${member.color}20` : 'rgba(11, 100, 221, 0.1)',
+                          color: isDark ? member.color : '#0B64DD',
                         }}
                       >
                         {member.initials}
@@ -144,7 +146,7 @@ function TeamScene() {
                     {/* Online indicator */}
                     <motion.div
                       className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-elastic-dev-blue"
-                      style={{ backgroundColor: member.color }}
+                      style={{ backgroundColor: isDark ? member.color : '#0B64DD' }}
                       animate={{
                         scale: [1, 1.2, 1],
                       }}
@@ -178,7 +180,7 @@ function TeamScene() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         <span className="truncate">{member.email}</span>
-                        <span className={`text-xs transition-opacity ${copiedEmail === member.id ? 'opacity-100' : 'opacity-0 group-hover/email:opacity-100'}`} style={{ color: member.color }}>
+                        <span className={`text-xs transition-opacity ${copiedEmail === member.id ? 'opacity-100' : 'opacity-0 group-hover/email:opacity-100'}`} style={{ color: isDark ? member.color : '#0B64DD' }}>
                           {copiedEmail === member.id ? 'Copied!' : 'Click to copy'}
                         </span>
                       </button>
@@ -203,7 +205,9 @@ function TeamScene() {
                 <div
                   className="absolute top-0 right-0 w-20 h-20 opacity-10"
                   style={{
-                    background: `linear-gradient(135deg, ${member.color}, transparent)`,
+                    background: isDark 
+                      ? `linear-gradient(135deg, ${member.color}, transparent)`
+                      : `linear-gradient(135deg, #0B64DD, transparent)`,
                   }}
                 />
               </motion.div>

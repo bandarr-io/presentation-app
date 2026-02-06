@@ -43,14 +43,16 @@ function HeroSearchBar({ text, isTyping, onShowAnswer, searchComplete, showCurso
         onClick={onShowAnswer}
         className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
           isTyping 
-            ? 'bg-elastic-teal/20 text-elastic-teal cursor-not-allowed' 
+            ? isDark 
+              ? 'bg-elastic-teal/20 text-elastic-teal cursor-not-allowed'
+              : 'bg-elastic-blue/20 text-elastic-blue cursor-not-allowed'
             : searchComplete
               ? isDark 
                 ? 'bg-elastic-teal/30 text-elastic-teal hover:bg-elastic-teal hover:text-white' 
-                : 'bg-elastic-teal/20 text-elastic-teal hover:bg-elastic-teal hover:text-white'
+                : 'bg-elastic-blue/20 text-elastic-blue hover:bg-elastic-blue hover:text-white'
               : isDark 
                 ? 'bg-white/10 text-white/60 hover:bg-elastic-teal hover:text-white' 
-                : 'bg-elastic-dev-blue/10 text-elastic-dev-blue/60 hover:bg-elastic-teal hover:text-white'
+                : 'bg-elastic-dev-blue/10 text-elastic-dev-blue/60 hover:bg-elastic-blue hover:text-white'
         }`}
         whileHover={!isTyping ? { scale: 1.1 } : {}}
         whileTap={!isTyping ? { scale: 0.95 } : {}}
@@ -191,7 +193,7 @@ function HeroScene() {
               {/* Prompt to click */}
               {!searchText && !isTyping && (
                 <motion.p
-                  className={`text-center mt-6 text-sm ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}
+                  className={`text-center mt-6 text-sm ${isDark ? 'text-white/40' : 'text-elastic-blue/60'}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: [0.4, 0.8, 0.4] }}
                   transition={{ duration: 2, repeat: Infinity }}
@@ -248,7 +250,7 @@ function HeroScene() {
               {/* Subtitle */}
               <motion.p
                 className={`text-paragraph text-xl md:text-2xl max-w-3xl mx-auto ${
-                  isDark ? 'text-elastic-light-grey' : 'text-elastic-ink'
+                  isDark ? 'text-elastic-light-grey' : 'text-elastic-blue'
                 }`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
