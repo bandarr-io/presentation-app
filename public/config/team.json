@@ -1,0 +1,47 @@
+{
+  "title": "Meet Your Elastic Team",
+  "subtitle": "Before we dive in—here's who you'll be working with today",
+  "members": [
+    {
+      "id": "cat",
+      "name": "Cat Owens",
+      "role": "Senior Account Executive",
+      "email": "cat.owens@elastic.co",
+      "phone": "202.360.9384",
+      "color": "#48EFCF",
+      "initials": "CO",
+      "photo": "/photos/cat-profile.jpeg"
+    },
+    {
+      "id": "daniel",
+      "name": "Daniel Barr",
+      "role": "Senior Solutions Architect",
+      "email": "daniel.barr@elastic.co",
+      "phone": "914.619.6230",
+      "color": "#0B64DD",
+      "initials": "DB",
+      "photo": "/photos/dan-profile.jpeg"
+    },
+    {
+      "id": "gene",
+      "name": "Gene Kent",
+      "role": "RVP Defense Industrial Base",
+      "email": "gene.kent@elastic.co",
+      "phone": "813.205.6097",
+      "color": "#F04E98",
+      "initials": "GK",
+      "photo": "/photos/gene-profile.jpeg"
+    },
+    {
+      "id": "matt",
+      "name": "Matt Wall",
+      "role": "Sr. Regional Service Provider",
+      "email": "matthew.wall@elastic.co",
+      "phone": "831.756.6386",
+      "color": "#FEC514",
+      "initials": "MW",
+      "photo": "/photos/matt-profile.jpeg"
+    }
+  ]
+}
+

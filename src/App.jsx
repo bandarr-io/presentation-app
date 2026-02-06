@@ -108,6 +108,22 @@ function App() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Ignore keyboard navigation when typing in input fields
+      const activeElement = document.activeElement
+      const isTyping = activeElement && (
+        activeElement.tagName === 'INPUT' ||
+        activeElement.tagName === 'TEXTAREA' ||
+        activeElement.isContentEditable
+      )
+      
+      if (isTyping) {
+        // Only allow Escape to blur the input
+        if (e.key === 'Escape') {
+          activeElement.blur()
+        }
+        return // Don't handle navigation keys while typing
+      }
+
       if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
         e.preventDefault()
         nextScene()

@@ -1,49 +1,7 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTheme } from '../context/ThemeContext'
-
-const teamMembers = [
-  {
-    id: 'cat',
-    name: 'Cat Owens',
-    role: 'Senior Account Executive',
-    email: 'cat.owens@elastic.co',
-    phone: '202.360.9384',
-    color: '#48EFCF',
-    initials: 'CO',
-    photo: '/photos/cat-profile.jpeg',
-  },
-  {
-    id: 'daniel',
-    name: 'Daniel Barr',
-    role: 'Senior Solutions Architect',
-    email: 'daniel.barr@elastic.co',
-    phone: '914.619.6230',
-    color: '#0B64DD',
-    initials: 'DB',
-    photo: '/photos/dan-profile.jpeg',
-  },
-  {
-    id: 'gene',
-    name: 'Gene Kent',
-    role: 'RVP Defense Industrial Base',
-    email: 'gene.kent@elastic.co',
-    phone: '813.205.6097',
-    color: '#F04E98',
-    initials: 'GK',
-    photo: '/photos/gene-profile.jpeg',
-  },
-  {
-    id: 'matt',
-    name: 'Matt Wall',
-    role: 'Sr. Regional Service Provider',
-    email: 'matthew.wall@elastic.co',
-    phone: '831.756.6386',
-    color: '#FEC514',
-    initials: 'MW',
-    photo: '/photos/matt-profile.jpeg',
-  },
-]
+import { useTeamConfig } from '../context/TeamContext'
 
 function TeamScene() {
   const { theme } = useTheme()
@@ -51,6 +9,14 @@ function TeamScene() {
   const [hoveredMember, setHoveredMember] = useState(null)
   const [copiedEmail, setCopiedEmail] = useState(null)
   const [imageErrors, setImageErrors] = useState({})
+  
+  // Use shared team config hook (syncs with Settings panel)
+  const { teamConfig, isLoading } = useTeamConfig()
+
+  // Reset image errors when team config changes (new photos uploaded)
+  useEffect(() => {
+    setImageErrors({})
+  }, [teamConfig])
 
   const handleImageError = (memberId) => {
     setImageErrors(prev => ({ ...prev, [memberId]: true }))
@@ -66,6 +32,21 @@ function TeamScene() {
     }
   }
 
+  // Show loading state briefly
+  if (isLoading) {
+    return (
+      <div className="scene flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className={isDark ? 'text-white/50' : 'text-elastic-dev-blue/50'}
+        >
+          Loading team...
+        </motion.div>
+      </div>
+    )
+  }
+
   return (
     <div className="scene">
       <div className="max-w-5xl mx-auto w-full">
@@ -79,16 +60,23 @@ function TeamScene() {
             Your Support
           </span>
           <h2 className={`text-headline text-5xl md:text-6xl font-extrabold mt-4 ${isDark ? 'text-white' : 'text-elastic-dark-ink'}`}>
-            Meet Your <span className="gradient-text">Elastic Team</span>
+            {teamConfig.title.includes('Elastic') ? (
+              <>
+                {teamConfig.title.split('Elastic')[0]}
+                <span className="gradient-text">Elastic{teamConfig.title.split('Elastic')[1]}</span>
+              </>
+            ) : (
+              teamConfig.title
+            )}
           </h2>
           <p className={`text-paragraph text-xl mt-4 max-w-2xl mx-auto ${isDark ? 'text-elastic-light-grey/80' : 'text-elastic-ink'}`}>
-            Before we dive in—here's who you'll be working with today
+            {teamConfig.subtitle}
           </p>
         </motion.div>
 
         {/* Team grid */}
         <div className="grid md:grid-cols-2 gap-6">
-          {teamMembers.map((member, index) => (
+          {teamConfig.members.map((member, index) => (
             <motion.div
               key={member.id}
               className="relative group"
@@ -187,7 +175,7 @@ function TeamScene() {
 
                       {/* Phone */}
                       <a
-                        href={`tel:${member.phone.replace(/\./g, '')}`}
+                        href={`tel:${member.phone?.replace(/\./g, '') || ''}`}
                         className={`flex items-center gap-2 text-sm transition-colors ${
                           isDark ? 'text-white/70 hover:text-white' : 'text-elastic-dev-blue/70 hover:text-elastic-dev-blue'
                         }`}
@@ -215,22 +203,38 @@ function TeamScene() {
           ))}
         </div>
 
+        {/* Empty state */}
+        {teamConfig.members.length === 0 && (
+          <motion.div
+            className="text-center py-16"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <p className={`text-lg ${isDark ? 'text-white/40' : 'text-elastic-dev-blue/40'}`}>
+              No team members configured.
+            </p>
+            <p className={`text-sm mt-2 ${isDark ? 'text-white/30' : 'text-elastic-dev-blue/30'}`}>
+              Click the ⚙️ settings button to add team members.
+            </p>
+          </motion.div>
+        )}
+
         {/* Bottom message */}
-        <motion.div
-          className="mt-12 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          <p className={isDark ? 'text-white/40' : 'text-elastic-dev-blue/50'}>
-          
-            <span className={isDark ? 'text-white/60' : 'text-elastic-dev-blue/70'}> </span>
-          </p>
-        </motion.div>
+        {teamConfig.members.length > 0 && (
+          <motion.div
+            className="mt-12 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            <p className={isDark ? 'text-white/40' : 'text-elastic-dev-blue/50'}>
+              <span className={isDark ? 'text-white/60' : 'text-elastic-dev-blue/70'}> </span>
+            </p>
+          </motion.div>
+        )}
       </div>
     </div>
   )
 }
 
 export default TeamScene
-
