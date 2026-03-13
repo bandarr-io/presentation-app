@@ -24,6 +24,7 @@ import ServicesScene from './scenes/ServicesScene'
 import DataMeshScene from './scenes/DataMeshScene'
 import TeamScene from './scenes/TeamScene'
 import NextStepsScene from './scenes/NextStepsScene'
+import ECHBillingScene from './scenes/ECHBillingScene'
 import Navigation from './components/Navigation'
 import ProgressBar from './components/ProgressBar'
 import SceneSettings, { useEnabledScenes } from './components/SceneSettings'
@@ -50,6 +51,7 @@ const scenes = [
   { id: 'licensing', component: LicensingScene, title: 'Licensing', description: 'One license, full power', duration: '3 min', hideFromAgenda: true },
   { id: 'consolidation', component: ConsolidationScene, title: 'Consolidation', description: 'Reduce tool sprawl', duration: '3 min', hideFromAgenda: true },
   { id: 'services', component: ServicesScene, title: 'Services & Support', description: 'Expert guidance at every stage', duration: '5 min', hideFromAgenda: true },
+  { id: 'ech-billing', component: ECHBillingScene, title: 'ECH Billing', description: 'Transparent billing across four dimensions', duration: '5 min', hideFromAgenda: true },
   { id: 'next-steps', component: NextStepsScene, title: 'Next Steps', description: 'Your path forward'}, //, duration: '2 min' },
 ]
 
